@@ -1,0 +1,16 @@
+hospital-server/target/
+hospital-web/node_modules/
+hospital-web/dist/
+.env
+.env.*
+!.env.example
+*.log
+.idea/
+.vscode/
+.cache/
+hospital-server/data/
+.impeccable/review/
+缩减版/开题答辩工作区V2/
+*.pid
+*.hprof
+*.jfr

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T10:30:00+08:00",
+  "title": "Design System: 医院智能导诊系统",
+  "extensions": {
+    "colorMeta": {
+      "primary": {"role":"primary","displayName":"医疗深蓝","canonical":"#1D4ED8","tonalRamp":["#172554","#1E3A8A","#1E40AF","#1D4ED8","#3B82F6","#60A5FA","#BFDBFE","#EFF6FF"]},
+      "primary-soft": {"role":"secondary","displayName":"浅蓝选择面","canonical":"#EFF6FF","tonalRamp":["#172554","#1E3A8A","#1E40AF","#1D4ED8","#3B82F6","#60A5FA","#BFDBFE","#EFF6FF"]},
+      "background": {"role":"neutral","displayName":"冷灰页面底","canonical":"#F5F7FB","tonalRamp":["#111827","#1F2937","#374151","#64748B","#94A3B8","#CBD5E1","#E2E8F0","#F5F7FB"]},
+      "surface": {"role":"neutral","displayName":"白色工作面","canonical":"#FFFFFF","tonalRamp":["#111827","#1F2937","#374151","#64748B","#94A3B8","#CBD5E1","#F8FAFC","#FFFFFF"]},
+      "text": {"role":"neutral","displayName":"墨色正文","canonical":"#0F172A","tonalRamp":["#020617","#0F172A","#1E293B","#334155","#475569","#64748B","#CBD5E1","#F8FAFC"]},
+      "muted": {"role":"neutral","displayName":"石板次文","canonical":"#475569","tonalRamp":["#0F172A","#1E293B","#334155","#475569","#64748B","#94A3B8","#CBD5E1","#F8FAFC"]},
+      "border": {"role":"neutral","displayName":"分隔线","canonical":"#D7DFEA","tonalRamp":["#1E293B","#334155","#475569","#64748B","#94A3B8","#CBD5E1","#D7DFEA","#F8FAFC"]},
+      "input-border": {"role":"neutral","displayName":"输入边界","canonical":"#7C8DA5","tonalRamp":["#1E293B","#334155","#475569","#64748B","#7C8DA5","#94A3B8","#CBD5E1","#F8FAFC"]}
+    },
+    "typographyMeta": {
+      "display":{"displayName":"登录主张","purpose":"登录页桌面首屏标题。"},
+      "headline":{"displayName":"页面标题","purpose":"管理、医生、患者页面的主标题。"},
+      "patient-body":{"displayName":"患者正文","purpose":"患者页面与移动端输入使用 16px。"}
+    },
+    "shadows": [],
+    "motion": [{"name":"reduced-motion","value":"prefers-reduced-motion","purpose":"减少动态效果时关闭过渡、动画与平滑滚动。"}],
+    "breakpoints": [{"name":"tablet","value":"1000px"},{"name":"mobile","value":"700px"}]
+  },
+  "components": [
+    {"name":"Primary Button","kind":"button","refersTo":"button-primary","description":"提交主要下一步操作。","html":"<button class=\"ds-btn-primary\">确认预约</button>","css":".ds-btn-primary{min-height:44px;padding:10px 16px;border:1px solid #1D4ED8;border-radius:8px;background:#1D4ED8;color:#FFFFFF;font:500 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif;cursor:pointer}.ds-btn-primary:hover{background:#1E40AF}.ds-btn-primary:focus-visible{outline:3px solid #1D4ED8;outline-offset:3px}"},
+    {"name":"Secondary Button","kind":"button","refersTo":"button-secondary","description":"返回、刷新或管理次要动作。","html":"<button class=\"ds-btn-secondary\">刷新列表</button>","css":".ds-btn-secondary{min-height:40px;padding:8px 16px;border:1px solid #7C8DA5;border-radius:8px;background:#FFFFFF;color:#475569;font:500 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif;cursor:pointer}.ds-btn-secondary:hover{border-color:#1D4ED8;color:#1D4ED8}.ds-btn-secondary:focus-visible{outline:3px solid #1D4ED8;outline-offset:3px}"},
+    {"name":"Panel","kind":"card","refersTo":"panel","description":"承载筛选、表单、列表和摘要的白色工作面。","html":"<section class=\"ds-panel\"><h2>门诊准备</h2><p>按顺序准备资料。</p></section>","css":".ds-panel{padding:24px;border:1px solid #D7DFEA;border-radius:12px;background:#FFFFFF;color:#0F172A}.ds-panel h2{margin:0;font:650 19px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif}.ds-panel p{margin:8px 0 0;color:#475569;font:400 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif}"},
+    {"name":"Input","kind":"input","refersTo":"input","description":"带可见标签的 Element Plus 风格字段。","html":"<label class=\"ds-field\">账号<input class=\"ds-input\" placeholder=\"请输入账号\"></label>","css":".ds-field{display:block;color:#0F172A;font:500 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif}.ds-input{display:block;width:100%;height:44px;margin-top:8px;padding:8px 12px;border:1px solid #7C8DA5;border-radius:8px;background:#FFFFFF;color:#0F172A;font:400 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif}.ds-input:focus{border-color:#1D4ED8;outline:3px solid #1D4ED8;outline-offset:1px}"},
+    {"name":"Patient Navigation","kind":"nav","refersTo":"navigation","description":"患者顶部导航，当前路由由深蓝文字和底线标记。","html":"<nav class=\"ds-patient-nav\"><a class=\"current\" aria-current=\"page\">预约挂号</a><a>我的就诊</a></nav>","css":".ds-patient-nav{display:flex;gap:24px;height:64px;align-items:center}.ds-patient-nav a{color:#475569;text-decoration:none;line-height:64px}.ds-patient-nav a.current{color:#1D4ED8;font-weight:600;box-shadow:inset 0 -2px #1D4ED8}.ds-patient-nav a:focus-visible{outline:3px solid #1D4ED8;outline-offset:3px}"},
+    {"name":"Status Badge","kind":"chip","refersTo":"status-badge","description":"文字加色面表达预约、接诊和提交状态。","html":"<span class=\"ds-status ds-status-open\">开放</span>","css":".ds-status{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font:500 13px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif;white-space:nowrap}.ds-status-open{background:#DCFCE7;color:#166534}.ds-status-waiting{background:#FEF3C7;color:#92400E}.ds-status-progress{background:#DBEAFE;color:#1E40AF}"},
+    {"name":"Schedule Card","kind":"card","refersTo":"panel","description":"患者预约场次的医生、时间、余号和选择动作。","html":"<article class=\"ds-schedule\"><strong>联调医生</strong><span>2026-10-14 · 上午</span><button class=\"ds-btn-primary\">选择场次</button></article>","css":".ds-schedule{display:flex;align-items:center;gap:24px;padding:24px;border:1px solid #D7DFEA;border-radius:12px;background:#FFFFFF;color:#0F172A;font:400 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif}.ds-schedule strong{font-size:19px}.ds-schedule span{flex:1;color:#475569}.ds-schedule .ds-btn-primary{flex:none}"},
+    {"name":"Medical Record Identity","kind":"custom","refersTo":"panel","description":"病历长页面持续显示当前患者、挂号号和时间。","html":"<div class=\"ds-record-identity\"><strong>当前患者：联调患者</strong><span>挂号号 R0c2</span><span>2026-10-13 · 上午</span></div>","css":".ds-record-identity{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px 24px;padding:16px;margin-bottom:24px;border:1px solid #D7DFEA;border-radius:8px;background:#FFFFFF;color:#0F172A;font:400 13px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif}.ds-record-identity strong{font-weight:650}"}
+  ],
+  "narrative": {
+    "northStar":"清晰的门诊工作台",
+    "overview":"这是一个以连续操作为中心的蓝白医疗管理系统。浅灰蓝页面底色、白色工作区和单一深蓝主色让预约、接诊、排班与病历内容保持清楚的层级；中文系统字体和 Element Plus 原生控件承担熟悉、可核对的工作感。登录、管理、医生和患者截图都使用同一套边界、按钮和状态表达。\n\n桌面管理端采用固定侧栏和顶栏，患者端保持顶部导航并在 375px 手机宽度下换行。表单标签可见，错误保留恢复入口，状态同时使用文字和颜色。截图中的患者预约确认、档案保护、医生工作台真实摘要和病历身份条是实际交付行为，不是装饰性概念。",
+    "keyCharacteristics":["蓝白、低装饰、内容优先的医疗工作区","真实接口状态、空状态与可恢复错误并列呈现","患者大字号与 44px 高频操作区，管理端紧凑表格密度","Element Plus 控件与 SVG 图标保持一致"],
+    "rules":[{"name":"The One Action Blue Rule","body":"深蓝用于主要下一步和当前上下文；次要动作留在白色描边层。","section":"colors"},{"name":"The Tonal Layer Rule","body":"默认依靠背景、白色表面和 `#D7DFEA` 边界建立层级；不要为普通面板添加额外投影。","section":"elevation"}],
+    "dos":["Do 使用 `#1D4ED8` 作为主要下一步、当前导航和品牌识别。","Do 保留清楚的中文标签、真实空状态、失败重试和输入保护。","Do 在患者端保持 16px 正文与 44px 高频操作区，在管理端保持 14px 表格密度。","Do 使用 Element Plus 组件和仓库已有 SVG 图标，状态同时显示文字。","Do 让长表格在容器内滚动，让病历身份在长页面可见。"],
+    "donts":["Don't 引入未经实现证据支持的渐变、插画、在线字体或大动效。","Don't 用颜色单独表达预约、接诊或病历状态。","Don't 为普通面板增加阴影或超过 12px 的圆角。","Don't 把患者 375px 手机布局压缩成桌面表格，或移除输入失败后的恢复入口。"]
+  }
+}
