@@ -2,6 +2,7 @@ package com.shen.hospital.ai.agent;
 
 import com.shen.hospital.auth.security.CurrentUser;
 import com.shen.hospital.common.ApiResponse;
+import com.shen.hospital.common.PageResult;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.util.Map;
@@ -24,6 +25,12 @@ public class PatientTriageController {
     @GetMapping("/triage-runs/{id}")
     public ApiResponse<TriageAgentService.RunView> get(@PathVariable @Positive Long id) {
         return ApiResponse.ok(agent.get(CurrentUser.get().id(),id));
+    }
+    @GetMapping("/consultations/{id}/triage-runs")
+    public ApiResponse<PageResult<TriageAgentService.RunView>> history(@PathVariable @Positive Long id,
+            @RequestParam(defaultValue="1") @Min(1) long page,
+            @RequestParam(defaultValue="20") @Min(1) @Max(100) long pageSize) {
+        return ApiResponse.ok(agent.history(CurrentUser.get().id(),id,page,pageSize));
     }
     @PostMapping("/triage-runs/{id}/cancel")
     public ApiResponse<Map<String,Boolean>> cancel(@PathVariable @Positive Long id) {

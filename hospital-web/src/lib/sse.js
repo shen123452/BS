@@ -1,9 +1,12 @@
+import { expireSession } from './session.js'
+
 export async function readSse(response, onEvent) {
   if (!response.ok) {
     let body = null
     try { body = await response.json() } catch {}
     const error = new Error(body?.message || `请求失败（${response.status}）`)
     Object.assign(error, { status: response.status, code: body?.code, traceId: body?.traceId })
+    if (response.status === 401) expireSession()
     throw error
   }
   if (!response.body) throw new Error('浏览器不支持流式读取，请更新浏览器后重试。')

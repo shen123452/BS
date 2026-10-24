@@ -1,6 +1,6 @@
 package com.shen.hospital.ai.agent;
 
-import com.shen.hospital.ai.tool.MedicalToolService;
+import com.shen.hospital.ai.tool.ToolRegistry;
 import com.shen.hospital.common.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminAgentController {
-    private final MedicalToolService tools;
+    private final ToolRegistry tools;
     private final TriageAgentService agent;
-    public AdminAgentController(MedicalToolService tools,TriageAgentService agent) {this.tools=tools;this.agent=agent;}
+    public AdminAgentController(ToolRegistry tools,TriageAgentService agent) {this.tools=tools;this.agent=agent;}
+    /** 下一次新运行可用的工具池，来自数据库启用状态。 */
     @GetMapping("/agent-tools")
     public ApiResponse<List<Map<String,Object>>> tools(){
-        return ApiResponse.ok(tools.specifications().stream().map(t->Map.<String,Object>of(
-                "name",t.name(),"description",t.description(),"readOnly",true)).toList());
+        return ApiResponse.ok(tools.enabled().stream().map(t->Map.<String,Object>of(
+                "name",t.getCode(),"description",t.getDescription(),"readOnly",true,
+                "status",t.getStatus(),"revision",t.getRevision())).toList());
     }
     @GetMapping("/agent-runs")
     public ApiResponse<PageResult<TriageAgentService.RunView>> list(

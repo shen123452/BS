@@ -1,5 +1,5 @@
 -- 医院智能导诊系统 · 缩减版 V2.2 · MySQL 5.7.25+
--- 在新建的独立演示库中执行；15张表，不包含账号密码或业务种子。
+-- 在新建的独立演示库中执行；16张表，不包含账号密码或业务种子。
 -- 本文件是一次性初始化，不用IF NOT EXISTS掩盖旧表结构差异，不删除已有表。
 -- 所有ID统一使用正有符号BIGINT，兼容Java Long和PostgreSQL BIGINT。
 -- MySQL 5.7 会忽略 CHECK 声明；状态、范围和跨字段规则必须由后端 Service 校验。
@@ -8,6 +8,15 @@ CREATE DATABASE IF NOT EXISTS hospital_triage
 USE hospital_triage;
 SET NAMES utf8mb4;
 SET SESSION time_zone = '+08:00';
+
+CREATE TABLE ai_provider_credential (
+  provider VARCHAR(32) COLLATE utf8mb4_bin NOT NULL,
+  api_key VARCHAR(512) COLLATE utf8mb4_bin NOT NULL COMMENT '服务端专用凭据，不对接口回传',
+  updated_by BIGINT NULL,
+  created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (provider)
+) ENGINE=InnoDB COMMENT='模型供应商凭据';
 
 CREATE TABLE sys_user (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '账号ID',

@@ -15,11 +15,13 @@ import org.springframework.transaction.annotation.*;
 @Service
 public class AiCallRecorder {
     private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<>();
-    private record Context(Long runId, Long stepId) {}
+    public record Context(Long runId, Long stepId) {}
     public static <T> T withContext(Long runId, Long stepId, Supplier<T> action) {
         Context previous = CONTEXT.get(); CONTEXT.set(new Context(runId, stepId));
         try { return action.get(); } finally { if (previous == null) CONTEXT.remove(); else CONTEXT.set(previous); }
     }
+    /** 当前线程的运行/步骤上下文；供工具调用日志等关联使用，无上下文时为 null。 */
+    public static Context currentContext() { return CONTEXT.get(); }
     public record Call(long id, long startedNanos) {
     }
 

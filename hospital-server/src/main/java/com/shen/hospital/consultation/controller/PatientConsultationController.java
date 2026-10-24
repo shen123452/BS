@@ -35,6 +35,10 @@ public class PatientConsultationController {
     @GetMapping("/{id}/messages") public ApiResponse<List<MessageView>> messages(@PathVariable @Positive Long id) {
         return ApiResponse.ok(consultations.messages(CurrentUser.get().id(),id));
     }
+    @DeleteMapping("/{id}") public ApiResponse<Map<String,Boolean>> delete(@PathVariable @Positive Long id) {
+        consultations.delete(CurrentUser.get().id(),id);
+        return ApiResponse.ok(Map.of("deleted",true));
+    }
     public record SummaryRequest(@NotNull @Valid ConfirmedSummary summary, @Min(0) int expectedSummaryVersion, boolean confirm) {}
     @PutMapping("/{id}/summary") public ApiResponse<SessionView> summary(@PathVariable @Positive Long id, @Valid @RequestBody SummaryRequest request) {
         return ApiResponse.ok(consultations.updateSummary(CurrentUser.get().id(), id, request.expectedSummaryVersion(), request.summary(), request.confirm()));

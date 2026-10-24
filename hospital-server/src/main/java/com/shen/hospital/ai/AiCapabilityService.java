@@ -35,9 +35,11 @@ public class AiCapabilityService {
     }
 
     public Map<String, Object> config() {
-        return Map.of("configured", models.configured(), "baseUrl", models.config().baseUrl(),
+        boolean configured = models.configured();
+        return Map.of("configured", configured, "baseUrl", models.config().baseUrl(),
                 "chatModel", models.config().chatModel(), "embeddingModel", models.config().embeddingModel(),
-                "embeddingDimension", models.config().embeddingDimension());
+                "embeddingDimension", models.config().embeddingDimension(),
+                "credentialSource", configured ? "DATABASE" : "NONE");
     }
 
     public Report probe(String traceId) {

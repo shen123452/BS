@@ -19,6 +19,16 @@ public class KnowledgeTaskPersistence {
         this.documents = documents; this.chunks = chunks;
     }
 
+    // All targets become durable maintenance markers in one MySQL transaction, before any vector is overwritten.
+    @Transactional(transactionManager = "mysqlTransactionManager")
+    public List<Long> queueRebuild(String spaceKey) {
+        documents.queueRebuild(spaceKey);
+        return documents.rebuilding().stream().map(d -> d.getId()).toList();
+    }
+
+    @Transactional(transactionManager = "mysqlTransactionManager")
+    public void finishRebuild() { documents.finishRebuild(); }
+
     @Transactional(transactionManager = "mysqlTransactionManager")
     public List<KnowledgeChunk> createOrReuseChunks(Long documentId, List<KnowledgeParser.Draft> drafts) {
         var existing = chunks.listByDocument(documentId, KnowledgeParser.SPLIT_VERSION);

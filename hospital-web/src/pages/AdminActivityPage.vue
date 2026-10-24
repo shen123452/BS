@@ -21,7 +21,17 @@ onMounted(() => Promise.all([load(),directory()]))
   <div class="page-heading"><div><h1 tabindex="-1">{{ statistics ? '业务统计' : '导诊运行记录' }}</h1><p>{{ statistics ? '预约按就诊日期统计，导诊按任务创建日期统计。统计值来自实际业务记录。' : '查看固定只读工具和导诊任务的实际步骤，不展示患者症状正文。' }}</p></div><el-button :loading="loading" @click="load">刷新</el-button></div>
   <ErrorPanel :error="error" @retry="load" /><ErrorPanel :error="actionError" />
   <template v-if="statistics">
-    <form class="panel filter-bar" @submit.prevent="search()"><div><label for="statistics-start">开始日期</label><el-date-picker id="statistics-start" v-model="filters.startDate" value-format="YYYY-MM-DD" :clearable="false" /></div><div><label for="statistics-end">结束日期</label><el-date-picker id="statistics-end" v-model="filters.endDate" value-format="YYYY-MM-DD" :clearable="false" /></div><el-button type="primary" native-type="submit">查询统计</el-button></form>
+    <form class="panel statistics-filters" @submit.prevent="search()">
+      <div class="statistics-date-field">
+        <label for="statistics-start">开始日期</label>
+        <el-date-picker id="statistics-start" v-model="filters.startDate" value-format="YYYY-MM-DD" :clearable="false" />
+      </div>
+      <div class="statistics-date-field">
+        <label for="statistics-end">结束日期</label>
+        <el-date-picker id="statistics-end" v-model="filters.endDate" value-format="YYYY-MM-DD" :clearable="false" />
+      </div>
+      <el-button class="statistics-query" type="primary" native-type="submit">查询统计</el-button>
+    </form>
     <div class="activity-columns" v-loading="loading"><section v-for="[key,title] in [['registrations','预约状态'],['agents','导诊状态']]" :key="key" class="panel"><h2>{{ title }}</h2><dl class="statistic-list"><div v-for="row in data?.[key] || []" :key="row.status"><dt>{{ names[row.status] || row.status }}</dt><dd>{{ row.count }} 次</dd></div></dl><p v-if="!data?.[key]?.length" class="muted">此日期范围暂无记录。</p></section></div>
     <section class="panel"><h2>科室预约量</h2><div class="table-container"><el-table :data="data?.departments || []" empty-text="此日期范围暂无预约"><el-table-column prop="departmentName" label="科室" min-width="180" /><el-table-column prop="count" label="预约次数（含取消）" min-width="160" /></el-table></div></section>
     <section class="panel"><h2>每日预约量</h2><div class="table-container"><el-table :data="data?.daily || []" empty-text="此日期范围暂无预约"><el-table-column prop="date" label="就诊日期" min-width="180" /><el-table-column prop="count" label="预约次数（含取消）" min-width="160" /></el-table></div></section>
@@ -32,3 +42,24 @@ onMounted(() => Promise.all([load(),directory()]))
     <el-dialog v-model="visible" :title="`运行 ${detail?.id || ''} 的实际步骤`" width="680px"><ol class="agent-timeline"><li v-for="step in detail?.steps || []" :key="step.sequenceNo"><strong>{{ step.publicLabel }}</strong><span>{{ names[step.status] || step.status }}<small v-if="step.durationMs != null"> · {{ (step.durationMs / 1000).toFixed(1) }} 秒</small></span></li></ol><p v-if="!detail?.steps?.length" class="muted">暂无执行步骤。</p></el-dialog>
   </template>
 </template>
+
+<style scoped>
+.statistics-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px)) max-content;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.statistics-date-field { min-width: 0; }
+.statistics-date-field label { margin: 0 0 8px; }
+.statistics-date-field :deep(.el-date-editor.el-input) {
+  width: 100%;
+  height: 44px;
+}
+.statistics-query { height: 44px; margin-left: 0; }
+@media (max-width: 600px) {
+  .statistics-filters { grid-template-columns: minmax(0, 1fr); }
+  .statistics-query { width: 100%; }
+}
+</style>

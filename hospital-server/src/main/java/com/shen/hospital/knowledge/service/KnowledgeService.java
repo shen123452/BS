@@ -35,6 +35,7 @@ public class KnowledgeService {
     private final ThreadPoolTaskExecutor executor;
     private final Path storage;
     private final long maxFileSize;
+    private final com.shen.hospital.ai.agent.AgentRunMapper runs;
     // 单机任务写入/重试共用互斥；外部模型调用不持有此锁。
     private final Object taskMutex = new Object();
     private final ReentrantReadWriteLock knowledgeGate = new ReentrantReadWriteLock(true);
@@ -43,15 +44,27 @@ public class KnowledgeService {
             KnowledgeParser parser, KnowledgeTaskPersistence persistence, HospitalAiService ai, ModelFactory models,
             BusinessTime time, @Qualifier("knowledgeTaskExecutor") ThreadPoolTaskExecutor executor,
             @Value("${hospital.knowledge.storage-path:./data/knowledge}") String storagePath,
-            @Value("${hospital.knowledge.max-file-size:10485760}") long maxFileSize) {
+            @Value("${hospital.knowledge.max-file-size:10485760}") long maxFileSize,
+            com.shen.hospital.ai.agent.AgentRunMapper runs) {
         this.documents=documents; this.chunks=chunks; this.vectors=vectors; this.parser=parser; this.persistence=persistence;
         this.ai=ai; this.models=models; this.time=time; this.executor=executor;
-        this.storage=Path.of(storagePath).toAbsolutePath().normalize(); this.maxFileSize=maxFileSize;
+        this.storage=Path.of(storagePath).toAbsolutePath().normalize(); this.maxFileSize=maxFileSize; this.runs=runs;
     }
 
     public record UploadResult(KnowledgeDocumentView document, boolean duplicate) {}
     public record SearchResult(List<KnowledgeHit> hits, String spaceKey, long durationMs) {}
-    public record KnowledgeStatus(String status, String spaceKey, int candidateCount) {}
+    public record KnowledgeStatus(String status, String spaceKey, int candidateCount,
+                                  int rebuildTotal,int rebuildReady,int rebuildFailed) {
+        public KnowledgeStatus(String status,String spaceKey,int candidateCount) { this(status,spaceKey,candidateCount,0,0,0); }
+    }
+
+    // Admission and maintenance share this lock until the new run's MySQL transaction has committed.
+    public <T> T admitAgent(java.util.function.Supplier<T> admission) {
+        knowledgeGate.readLock().lock();
+        try { return admission.get(); } finally { knowledgeGate.readLock().unlock(); }
+    }
+    public boolean maintenance() { return !documents.rebuilding().isEmpty(); }
+    private void requireWritable() { if(maintenance()) throw maintaining(); }
 
     public void recoverInterrupted() { synchronized(taskMutex) { documents.failInterrupted(); } }
 
@@ -65,6 +78,7 @@ public class KnowledgeService {
         if(bytes.length==0 || bytes.length>maxFileSize) throw invalid("资料超过大小限制或为空");
         String sha=hash(bytes);
         synchronized(taskMutex) {
+            requireWritable();
             var previous=documents.findDuplicate(sha,version.strip());
             if(previous!=null) return new UploadResult(KnowledgeDocumentView.of(previous),true);
             String key=UUID.randomUUID()+(original.endsWith(".pdf")?".pdf":".txt");
@@ -143,6 +157,7 @@ public class KnowledgeService {
                 try {
                     requireOperation(id,operation);
                     if(documents.publish(id,operation,space,ids.size())!=1) throw inconsistent();
+                    finishMaintenanceIfReady();
                 } finally { knowledgeGate.writeLock().unlock(); }
             }
         } catch(Exception ex) {
@@ -167,15 +182,19 @@ public class KnowledgeService {
 
     public KnowledgeDocumentView retry(Long id,String traceId) {
         synchronized(taskMutex) {
-            requireDocument(id);
+            var doc=requireDocument(id);
+            if(maintenance() && (!"REBUILD".equals(doc.getTaskKind()) || !spaceKey().equals(doc.getTargetSpaceKey())))
+                throw maintaining();
             if(documents.retry(id)!=1) throw BusinessException.conflict("KNOWLEDGE_RETRY_UNAVAILABLE","只有失败资料可以重试");
             submit(id,traceId); return detail(id);
         }
     }
 
     public KnowledgeDocumentView enabled(Long id,boolean enabled) {
+        synchronized(taskMutex) {
         knowledgeGate.writeLock().lock();
         try {
+            requireWritable();
             var doc=requireDocument(id);
             if(enabled) {
                 if(!"READY".equals(doc.getStatus()) || !spaceKey().equals(doc.getTargetSpaceKey()))
@@ -185,11 +204,60 @@ public class KnowledgeService {
             }
             documents.setEnabled(id,enabled?1:0); return detail(id);
         } finally { knowledgeGate.writeLock().unlock(); }
+        }
+    }
+
+    public KnowledgeStatus rebuild(String traceId) {
+        synchronized(taskMutex) {
+            knowledgeGate.writeLock().lock();
+            try {
+                models.requireConfigured();
+                if(!runs.interrupted().isEmpty()) throw BusinessException.conflict("AGENT_ACTIVE", "请先等待或停止正在运行的导诊，再重建知识库");
+                if(documents.activeCount()>0) throw BusinessException.conflict("KNOWLEDGE_BUSY", "资料仍在处理中，请完成后再重建");
+                if(documents.allDocuments().isEmpty()) throw BusinessException.conflict("KNOWLEDGE_EMPTY", "请先上传知识资料");
+                var ids=persistence.queueRebuild(spaceKey());
+                // One bounded executor task processes all targets, avoiding a partial enqueue when the queue is full.
+                try { executor.execute(() -> ids.forEach(id -> process(id,traceId))); }
+                catch(org.springframework.core.task.TaskRejectedException ex) {
+                    ids.forEach(id -> documents.failQueued(id,"TASK_QUEUE_FULL","处理队列已满，请重新开始重建"));
+                }
+                return status();
+            } finally { knowledgeGate.writeLock().unlock(); }
+        }
+    }
+
+    public KnowledgeDocumentView rebuildDisabled(Long id,String traceId) {
+        synchronized(taskMutex) {
+            knowledgeGate.writeLock().lock();
+            try {
+                requireWritable(); models.requireConfigured(); requireDocument(id);
+                if(documents.queueDisabledRebuild(id,spaceKey())!=1)
+                    throw BusinessException.conflict("KNOWLEDGE_REBUILD_UNAVAILABLE","只有已停用且就绪或失败的资料可以单独重建");
+                submit(id,traceId); return detail(id);
+            } finally { knowledgeGate.writeLock().unlock(); }
+        }
+    }
+
+    // REBUILD markers stay durable across failures and restarts. Clear them only after checking every target and vector.
+    private void finishMaintenanceIfReady() {
+        var targets=documents.rebuilding();
+        if(targets.isEmpty() || targets.stream().anyMatch(d -> !"READY".equals(d.getStatus()) || !spaceKey().equals(d.getTargetSpaceKey()))) return;
+        for(var doc:targets) {
+            var ids=chunks.listByDocument(doc.getId(),KnowledgeParser.SPLIT_VERSION).stream().map(KnowledgeChunk::getId).toList();
+            if(ids.isEmpty() || ids.size()!=doc.getTotalChunks() || !vectors.verifyReady(ids,spaceKey(),models.config().embeddingDimension())) throw inconsistent();
+        }
+        persistence.finishRebuild();
     }
 
     public KnowledgeStatus status() {
         knowledgeGate.readLock().lock();
-        try { int count=documents.candidateChunkIds(spaceKey()).size(); return new KnowledgeStatus(count==0?"UNAVAILABLE":"AVAILABLE",spaceKey(),count); }
+        try {
+            var targets=documents.rebuilding();
+            if(!targets.isEmpty()) return new KnowledgeStatus("MAINTENANCE",spaceKey(),0,targets.size(),
+                    (int)targets.stream().filter(d -> "READY".equals(d.getStatus()) && spaceKey().equals(d.getTargetSpaceKey())).count(),
+                    (int)targets.stream().filter(d -> "FAILED".equals(d.getStatus())).count());
+            int count=documents.candidateChunkIds(spaceKey()).size(); return new KnowledgeStatus(count==0?"UNAVAILABLE":"AVAILABLE",spaceKey(),count);
+        }
         finally { knowledgeGate.readLock().unlock(); }
     }
 
@@ -198,10 +266,13 @@ public class KnowledgeService {
         if(topK<1||topK>10) throw invalid("TopK须为1到10");
         long started=System.nanoTime(); String space=spaceKey();
         // 先检查是否有知识；生成查询向量时不占知识锁，然后在读锁内重新取候选。
-        if(documents.candidateChunkIds(space).isEmpty()) throw unavailable();
+        knowledgeGate.readLock().lock();
+        try { requireWritable(); if(documents.candidateChunkIds(space).isEmpty()) throw unavailable(); }
+        finally { knowledgeGate.readLock().unlock(); }
         var embedding=ai.embed(query.strip(),traceId);
         knowledgeGate.readLock().lock();
         try {
+            requireWritable();
             var candidates=documents.candidateChunkIds(space);
             if(candidates.isEmpty()) throw unavailable();
             if(candidates.size()>5000) throw invalid("知识片段超过首版5000片段范围");
@@ -233,4 +304,5 @@ public class KnowledgeService {
     private static BusinessException unavailable() { return new BusinessException(HttpStatus.SERVICE_UNAVAILABLE,"KNOWLEDGE_UNAVAILABLE","没有已启用且完成处理的资料，请先在知识库中准备资料"); }
     private static BusinessException inconsistent() { return new BusinessException(HttpStatus.SERVICE_UNAVAILABLE,"KNOWLEDGE_INCONSISTENT","知识片段与向量索引不一致，请停用相关资料并重试"); }
     private static BusinessException storageError() { return new BusinessException(HttpStatus.SERVICE_UNAVAILABLE,"KNOWLEDGE_STORAGE_UNAVAILABLE","资料存储暂不可用"); }
+    private static BusinessException maintaining() { return BusinessException.conflict("KNOWLEDGE_MAINTENANCE","知识库正在重建，检索与资料修改暂停；失败资料可重试，普通预约仍可使用"); }
 }

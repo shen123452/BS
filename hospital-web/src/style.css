@@ -172,17 +172,22 @@ form > label:first-child { margin-top: 0; }
 .record-actions { position: sticky; bottom: 0; display: flex; align-items: center; justify-content: end; gap: 12px; flex-wrap: wrap; background: white; border-top: 1px solid var(--border); padding: 18px 0 18px; margin-top: 32px; }
 .record-content .record-section { scroll-margin-bottom: 110px; }
 .record-actions > span { margin-right: auto; font-size: 12px; }
-.consultation-shell { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 24px; min-height: 600px; padding: 0; overflow: hidden; }
-.consultation-history { padding: 24px 12px 24px 24px; border-right: 1px solid var(--border); }
+.consultation-shell { --consultation-chat-height: clamp(480px, calc(100dvh - 240px), 820px); display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 24px; min-height: 0; padding: 0; overflow: hidden; }
+.consultation-history { max-height: var(--consultation-chat-height); overflow-y: auto; overscroll-behavior-y: contain; padding: 24px 12px 24px 24px; border-right: 1px solid var(--border); }
 .consultation-history h2 { padding: 0 12px 16px; font-size: 16px; }
 .consultation-history button { display: grid; width: 100%; gap: 3px; padding: 12px; margin-bottom: 6px; text-align: left; border: 0; border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; }
 .consultation-history button:hover, .consultation-history button.selected { background: var(--primary-soft); color: #1e40af; }
 .consultation-history button:disabled { cursor: default; opacity: .7; }
 .consultation-history button small { color: var(--muted); }
-.consultation-main { display: flex; min-width: 0; min-height: 600px; flex-direction: column; }
-.consultation-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 28px; border-bottom: 1px solid var(--border); }
+.consultation-main { display: flex; min-width: 0; min-height: 0; flex-direction: column; }
+.consultation-chat { display: flex; flex-direction: column; height: var(--consultation-chat-height); }
+.consultation-chat > .consultation-title, .consultation-chat > .consultation-notice, .consultation-chat > .consultation-composer { flex-shrink: 0; }
+.consultation-title { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 24px 28px; border-bottom: 1px solid var(--border); }
 .consultation-title span { color: var(--muted); font-size: 13px; }
-.consultation-messages { flex: 1; min-height: 300px; max-height: 600px; overflow: auto; padding: 28px; }
+.consultation-message-area { position: relative; display: flex; flex: 1; min-height: 0; }
+.consultation-messages { flex: 1; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; padding: 28px; }
+.consultation-messages:focus-visible { outline-offset: -3px; }
+.consultation-scroll-latest { position: absolute; right: 28px; bottom: 16px; margin: 0; }
 .chat-message { max-width: min(720px, 90%); padding: 14px 16px; margin-bottom: 18px; border: 1px solid var(--border); border-radius: 12px; }
 .chat-message strong { font-size: 13px; color: var(--muted); }
 .chat-message p { margin-top: 6px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.85; }
@@ -193,6 +198,8 @@ form > label:first-child { margin-top: 0; }
 .consultation-empty { display: grid; place-content: center; min-height: 260px; padding: 28px; text-align: center; color: var(--muted); }
 .consultation-empty h2 { color: var(--text); }
 .consultation-empty .el-button { margin: 20px auto 0; }
+.consultation-main > .consultation-empty { min-height: var(--consultation-chat-height); }
+.consultation-messages > .consultation-empty { min-height: 100%; padding: 0; }
 .consultation-composer { padding: 20px 28px 24px; border-top: 1px solid var(--border); }
 .composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 10px; color: var(--muted); font-size: 12px; }
 .composer-footer > div { display: flex; gap: 8px; flex-shrink: 0; }
@@ -224,7 +231,7 @@ form > label:first-child { margin-top: 0; }
 .knowledge-chunk:last-child { border-bottom: 0; }
 .knowledge-chunk header { display: flex; justify-content: space-between; color: var(--muted); }
 .knowledge-chunk p { margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
-.consultation-title > div { display: flex; align-items: center; gap: 12px; }
+.consultation-title > div { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
 .triage-form .risk-fields { margin-top: 16px; }
 .risk-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .risk-row .el-radio { margin-right: 18px; min-height: 44px; }
@@ -316,13 +323,13 @@ form > label:first-child { margin-top: 0; }
   .record-actions { position: static; }
   .record-actions > span { width: 100%; }
   .record-actions .el-button { margin-left: 0; flex: 1; }
-  .consultation-shell { grid-template-columns: 1fr; min-height: 0; }
+  .consultation-shell { --consultation-chat-height: max(560px, calc(100dvh - 140px)); grid-template-columns: 1fr; }
   .consultation-history { max-height: 220px; padding: 16px; border-right: 0; border-bottom: 1px solid var(--border); overflow: auto; }
   .consultation-history h2 { padding: 0 4px 10px; }
   .consultation-history button { display: inline-grid; width: auto; min-width: 150px; margin: 0 4px 4px 0; }
-  .consultation-main { min-height: 520px; }
   .consultation-title, .consultation-composer { padding-left: 16px; padding-right: 16px; }
-  .consultation-messages { padding: 20px 16px; max-height: 520px; }
+  .consultation-messages { padding: 20px 16px; }
+  .consultation-scroll-latest { right: 16px; }
   .consultation-title { flex-wrap: wrap; }
   .consultation-title > div { width: 100%; justify-content: space-between; flex-wrap: wrap; }
   .chat-message { max-width: 94%; }
@@ -340,3 +347,13 @@ form > label:first-child { margin-top: 0; }
   .el-dialog__footer .el-button { margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; scroll-behavior: auto !important; } }
+.consultation-results { padding: 24px; border-top: 1px solid var(--border); }
+.consultation-results ul { list-style: none; padding: 0; margin: 16px 0; }
+.consultation-results li { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.consultation-results li div { display: grid; gap: 4px; }
+.consultation-results small { color: var(--muted); }
+.consultation-notice { padding: 12px 24px; margin: 0; background: var(--primary-soft); }
+.consultation-title > strong { min-width: 0; overflow-wrap: anywhere; }
+.consultation-title .el-button { margin-left: 0; }
+.knowledge-maintenance { margin-bottom: 24px; }
+@media (max-width: 700px) { .consultation-results { padding: 20px 16px; } .consultation-notice { padding: 12px 16px; } }

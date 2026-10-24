@@ -39,7 +39,9 @@ class ConsultationServiceTest {
         patients = mock(PatientProfileMapper.class);
         var models = new ModelFactory(new AiProperties("http://127.0.0.1/v1", "test-key", "qwen-plus", "text-embedding-v4", 1024, 30));
         var clock = Clock.fixed(LocalDateTime.of(2026, 10, 13, 9, 0).atZone(ZoneId.of("Asia/Shanghai")).toInstant(), ZoneId.of("Asia/Shanghai"));
-        service = new ConsultationService(sessions, messages, patients, models, new BusinessTime(clock));
+        var prompts = mock(com.shen.hospital.ai.prompt.PromptService.class);
+        when(prompts.current(com.shen.hospital.ai.prompt.PromptService.PRECONSULT)).thenReturn("工程测试预问诊提示");
+        service = new ConsultationService(sessions, messages, patients, models, new BusinessTime(clock), prompts);
         session = new ConsultationSession();
         session.setId(20L);
         session.setPatientId(10L);
@@ -63,7 +65,7 @@ class ConsultationServiceTest {
         assertFalse(prepared.replay());
         assertEquals("STREAMING", prepared.state());
         assertEquals(2, prepared.request().messages().size());
-        assertTrue(prepared.request().messages().getFirst().toString().contains("不作疾病诊断"));
+        assertTrue(prepared.request().messages().getFirst().toString().contains("工程测试预问诊提示"));
         verify(messages, times(2)).insert(any(ConsultationMessage.class));
         verify(sessions).startOperation(eq(20L), eq(prepared.operationId()), eq("CHAT"), any(LocalDateTime.class));
         assertEquals("最近咳嗽两天", session.getTitle());
@@ -116,5 +118,29 @@ class ConsultationServiceTest {
         row.setContent(content);
         row.setStatus("COMPLETED");
         return row;
+    }
+    @Test void deletionRejectsOtherPatientsAndEveryActiveOperation(){
+        session.setPatientId(99L);
+        assertEquals("RESOURCE_NOT_FOUND",assertThrows(BusinessException.class,()->service.delete(1L,20L)).code());
+        session.setPatientId(10L);session.setActiveOperationId("active");
+        for(String type:List.of("CHAT","TRIAGE")) {
+            session.setActiveOperationType(type);
+            assertEquals("SESSION_BUSY",assertThrows(BusinessException.class,()->service.delete(1L,20L)).code());
+        }
+        verify(sessions,never()).softDelete(anyLong(),anyLong(),any());verifyNoInteractions(messages);
+    }
+    @Test void deletionOnlyMarksSessionAndPreservesMessages(){
+        when(sessions.softDelete(eq(20L),eq(10L),any())).thenReturn(1);
+        service.delete(1L,20L);verify(sessions).softDelete(eq(20L),eq(10L),any());verifyNoInteractions(messages);
+    }
+    @Test void expiredTriageCannotBeClearedByStartingChat(){
+        session.setActiveOperationId("triage");session.setActiveOperationType("TRIAGE");session.setOperationDeadline(LocalDateTime.of(2026,10,13,8,0));
+        assertEquals("SESSION_BUSY",assertThrows(BusinessException.class,()->service.begin(1L,20L,new SendMessageRequest("client","咳嗽"))).code());
+        verify(sessions,never()).finishOperation(anyLong(),anyString());verify(messages,never()).insert(any(ConsultationMessage.class));
+    }
+    @Test void chatCancellationCannotReleaseActiveTriage(){
+        session.setActiveOperationId("triage");session.setActiveOperationType("TRIAGE");
+        assertEquals("OPERATION_TYPE_CONFLICT",assertThrows(BusinessException.class,()->service.cancel(1L,20L,"triage")).code());
+        verify(sessions,never()).finishOperation(anyLong(),anyString());verifyNoInteractions(messages);
     }
 }

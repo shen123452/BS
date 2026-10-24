@@ -48,6 +48,14 @@ public class AdminKnowledgeController {
     }
     @GetMapping("/status")
     public ApiResponse<KnowledgeService.KnowledgeStatus> status() { return ApiResponse.ok(knowledge.status()); }
+    @PostMapping("/rebuild")
+    public ResponseEntity<ApiResponse<KnowledgeService.KnowledgeStatus>> rebuild() {
+        return ResponseEntity.accepted().body(ApiResponse.ok(knowledge.rebuild(MDC.get("traceId"))));
+    }
+    @PostMapping("/documents/{id}/rebuild")
+    public ResponseEntity<ApiResponse<KnowledgeDocumentView>> rebuildDisabled(@PathVariable @Positive Long id) {
+        return ResponseEntity.accepted().body(ApiResponse.ok(knowledge.rebuildDisabled(id,MDC.get("traceId"))));
+    }
     public record SearchRequest(@NotBlank @Size(max=1000) String query,@Min(1) @Max(10) Integer topK) {}
     @PostMapping("/search")
     public ApiResponse<KnowledgeService.SearchResult> search(@Valid @RequestBody SearchRequest request) {

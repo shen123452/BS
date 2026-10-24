@@ -64,6 +64,7 @@ async function poll(id = route.params.runId) {
   clearTimeout(timer); error.value = null
   try {
     run.value = await get(`/patient/triage-runs/${id}`)
+    result.value = null
     if (!active.value) sessionStorage.removeItem(`hospital.triage.${run.value.sessionId}`)
     if (run.value.resultId) result.value = await get(`/patient/triage-results/${run.value.resultId}`)
     if (!disposed && active.value) timer = setTimeout(() => poll(id),2000)

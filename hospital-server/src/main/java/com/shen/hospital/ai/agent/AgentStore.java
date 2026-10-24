@@ -2,7 +2,6 @@ package com.shen.hospital.ai.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shen.hospital.ai.ModelFactory;
-import com.shen.hospital.ai.tool.MedicalToolService;
 import com.shen.hospital.common.*;
 import com.shen.hospital.consultation.dto.ConfirmedSummary;
 import com.shen.hospital.consultation.mapper.ConsultationSessionMapper;
@@ -37,7 +36,9 @@ public class AgentStore {
     public record Accepted(AgentRun run, boolean created) {}
 
     @Transactional(transactionManager="mysqlTransactionManager", isolation=Isolation.READ_COMMITTED)
-    public Accepted create(Long userId, Long sessionId, int version, String clientId, String traceId, String prompt, String space, boolean knowledgeAvailable) {
+    public Accepted create(Long userId, Long sessionId, int version, String clientId, String traceId,
+                           String prompt, Long promptRevisionId, List<String> toolCodes, String space,
+                           boolean knowledgeAvailable, boolean maintenance) {
         var patient = patients.lockByUserId(userId);
         if (patient == null) throw BusinessException.missing("患者档案");
         var session = sessions.lockById(sessionId);
@@ -53,6 +54,7 @@ public class AgentStore {
         ConfirmedSummary summary = summary(session.getSummaryJson());
         if (session.getActiveOperationId() != null) throw BusinessException.conflict("SESSION_BUSY", "当前会话有任务正在处理，请稍候");
         if (!summary.emergency()) {
+            if (maintenance) throw BusinessException.conflict("KNOWLEDGE_MAINTENANCE", "知识库正在重建，请稍后导诊或直接使用普通预约");
             models.requireConfigured();
             if (!knowledgeAvailable) throw new BusinessException(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE,
                     "KNOWLEDGE_UNAVAILABLE", "请管理员先启用已完成处理的导诊资料，或直接使用普通预约");
@@ -69,10 +71,11 @@ public class AgentStore {
         snapshot.put("allergyStatus", patient.getAllergyStatus()); snapshot.put("allergyHistory", patient.getAllergyHistory());
         run.setInputSnapshot(snapshot.toString()); run.setModelName(models.config().chatModel());
         run.setConfigFingerprint(models.fingerprint()); run.setPromptHash(hash(prompt));
-        run.setToolNames(json.valueToTree(MedicalToolService.NAMES).toString());
+        run.setPromptRevisionId(promptRevisionId); run.setPromptContent(prompt);
+        run.setToolNames(json.valueToTree(toolCodes).toString());
         run.setKnowledgeSnapshot(json.valueToTree(Map.of("spaceKey", space)).toString());
         run.setSafetyRuleVersion("explicit-risk-v1"); run.setStatus("QUEUED");
-        run.setMaxRounds(4); run.setMaxToolCalls(6); run.setActualRounds(0); run.setActualToolCalls(0);
+        run.setMaxRounds(6); run.setMaxToolCalls(12); run.setActualRounds(0); run.setActualToolCalls(0);
         run.setDeadlineAt(time.now().plusSeconds(60)); run.setTraceId(traceId == null ? UUID.randomUUID().toString() : traceId);
         if (sessions.startTriage(sessionId, patient.getId(), version, run.getRunNo(), run.getDeadlineAt()) != 1)
             throw BusinessException.conflict("SESSION_BUSY", "当前会话有任务正在处理，请稍候");
@@ -98,6 +101,14 @@ public class AgentStore {
         return result;
     }
     public TriageResult byRun(Long id) { return results.byRun(id); }
+    public PageResult<AgentRun> history(Long userId, Long sessionId, long page, long size) {
+        Long patientId=patients.findIdByUserId(userId);
+        if(patientId==null || sessions.findOwned(sessionId,patientId)==null) throw BusinessException.missing("问诊会话");
+        return PageResult.from(runs.selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page,size),
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AgentRun>()
+                        .eq(AgentRun::getPatientId,patientId).eq(AgentRun::getSessionId,sessionId)
+                        .orderByDesc(AgentRun::getId)),r->r);
+    }
     public PageResult<AgentRun> list(String status,long page,long size) {
         return PageResult.from(runs.selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page,size),
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AgentRun>()
@@ -141,6 +152,8 @@ public class AgentStore {
         if (!"SUCCEEDED".equals(status)) {
             jdbc.update("UPDATE ai_call_log SET status=?,finished_at=?,error_code=?,error_message=? WHERE step_id=? AND status='RUNNING'",
                     "TIMEOUT".equals(status)?"TIMEOUT":"FAILED",time.now(),code,"本次查询未完成",step.getId());
+            jdbc.update("UPDATE mcp_tool_call_log SET status=?,finished_at=?,error_code=? WHERE step_id=? AND status='RUNNING'",
+                    "TIMEOUT".equals(status)?"TIMEOUT":"FAILED",time.now(),code,step.getId());
         }
     }
     @Transactional(transactionManager="mysqlTransactionManager")
@@ -165,6 +178,8 @@ public class AgentStore {
         jdbc.update("UPDATE agent_step SET status=?,finished_at=?,error_code=? WHERE run_id=? AND status='RUNNING'",stepStatus,time.now(),code,run.getId());
         jdbc.update("UPDATE ai_call_log SET status=?,finished_at=?,error_code=?,error_message=? WHERE run_id=? AND status='RUNNING'",
                 "CANCELLED".equals(state)?"CANCELLED":"TIMEOUT".equals(stepStatus)?"TIMEOUT":"FAILED",time.now(),code,message,run.getId());
+        jdbc.update("UPDATE mcp_tool_call_log SET status=?,finished_at=?,error_code=? WHERE run_id=? AND status='RUNNING'",
+                "CANCELLED".equals(state)?"CANCELLED":"TIMEOUT".equals(stepStatus)?"TIMEOUT":"FAILED",time.now(),code,run.getId());
     }
     public List<AgentRun> expired() { return runs.expired(time.now()); }
     public List<AgentRun> interrupted() { return runs.interrupted(); }

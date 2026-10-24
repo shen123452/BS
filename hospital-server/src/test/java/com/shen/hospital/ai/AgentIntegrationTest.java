@@ -2,7 +2,7 @@ package com.shen.hospital.ai;
 
 import com.fasterxml.jackson.databind.*;
 import com.shen.hospital.ai.agent.*;
-import com.shen.hospital.ai.tool.MedicalToolService;
+import com.shen.hospital.ai.tool.ToolRegistry;
 import com.shen.hospital.auth.domain.Role;
 import com.shen.hospital.auth.security.JwtService;
 import com.shen.hospital.auth.service.AuthService;
@@ -48,7 +48,7 @@ class AgentIntegrationTest {
     @Autowired @Qualifier("mysqlDataSource") DataSource datasource;
     @Autowired @Qualifier("agentTaskExecutor") org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor executor;
     @MockitoBean HospitalAiService ai;
-    @MockitoBean MedicalToolService tools;
+    @MockitoBean ToolRegistry tools;
     JdbcTemplate jdbc;
     Long user,patient,session,department;
     int version;
@@ -66,6 +66,7 @@ class AgentIntegrationTest {
         version=consultations.updateSummary(user,session,0,summary("NO"),true).summaryVersion();
         when(tools.spaceKey()).thenReturn("test-space");
         when(tools.knowledgeAvailable()).thenReturn(true);
+        when(tools.enabledCodes()).thenReturn(java.util.List.of(ToolRegistry.KNOWLEDGE_TOOL));
         when(tools.specifications()).thenReturn(List.of());
         when(tools.directory()).thenAnswer(inv -> directory.enabledDepartments());
         when(tools.finalSchedules(anyString(),any())).thenReturn(json.createArrayNode());
@@ -77,6 +78,7 @@ class AgentIntegrationTest {
         assertEquals(0,executor.getActiveCount(),"agent workers must end before test fixture cleanup");
         jdbc.update("UPDATE consultation_session SET latest_result_id=NULL,active_operation_id=NULL,active_operation_type=NULL,operation_deadline=NULL WHERE id=?",session);
         jdbc.update("DELETE l FROM ai_call_log l JOIN agent_run r ON r.id=l.run_id WHERE r.patient_id=?",patient);
+        jdbc.update("DELETE l FROM mcp_tool_call_log l JOIN agent_run r ON r.id=l.run_id WHERE r.patient_id=?",patient);
         jdbc.update("DELETE s FROM agent_step s JOIN agent_run r ON r.id=s.run_id WHERE r.patient_id=?",patient);
         jdbc.update("DELETE FROM triage_result WHERE patient_id=?",patient);
         jdbc.update("DELETE FROM agent_run WHERE patient_id=?",patient);
@@ -92,7 +94,7 @@ class AgentIntegrationTest {
     }
     ChatResponse answer(String text){return ChatResponse.builder().aiMessage(AiMessage.from(text)).build();}
     ChatResponse tool(String id){return ChatResponse.builder().aiMessage(AiMessage.from(ToolExecutionRequest.builder()
-            .id(id).name(MedicalToolService.SEARCH).arguments("{\"query\":\"咳嗽\"}").build())).build();}
+            .id(id).name(ToolRegistry.KNOWLEDGE_TOOL).arguments("{\"query\":\"咳嗽\"}").build())).build();}
     String candidate(String ref){return "{\"departmentId\":\""+department+"\",\"alternativeDepartmentIds\":[],\"riskLevel\":\"ROUTINE\",\"reason\":\"仅工程测试的导诊参考\",\"evidenceChunkIds\":"+ref+",\"needMoreInfo\":false,\"questions\":[]}";}
     TriageAgentService.RunView await(Long id)throws Exception{
         long until=System.nanoTime()+TimeUnit.SECONDS.toNanos(8);
@@ -104,7 +106,8 @@ class AgentIntegrationTest {
 
     @Test void actualToolSelectionAndCitationPersistAndReplayWithoutSecondModelCall()throws Exception{
         when(ai.chatWithTools(any(),eq("AGENT"),anyString())).thenReturn(tool("call-search"),answer(candidate("[\"5\"]")));
-        when(tools.execute(eq(MedicalToolService.SEARCH),anyString(),anyString())).thenReturn(json.readTree("{\"spaceKey\":\"test-space\",\"hits\":[{\"chunkId\":\"5\",\"title\":\"工程测试来源\",\"excerpt\":\"虚构工程资料\"}]}"));
+        when(tools.enabled(ToolRegistry.KNOWLEDGE_TOOL)).thenReturn(true);
+        when(tools.execute(eq(ToolRegistry.KNOWLEDGE_TOOL),anyString(),any(),any(),anyString())).thenReturn(json.readTree("{\"spaceKey\":\"test-space\",\"hits\":[{\"chunkId\":\"5\",\"title\":\"工程测试来源\",\"excerpt\":\"虚构工程资料\"}]}"));
         String client="stable-client";
         Long id=Long.valueOf(agent.create(user,session,version,client,"trace").run().id());
         var complete=await(id);assertEquals("SUCCEEDED",complete.status());assertEquals(2,complete.actualRounds());assertEquals(1,complete.actualToolCalls());
@@ -128,12 +131,13 @@ class AgentIntegrationTest {
         var value=await(create());assertEquals("FAILED",value.status());assertEquals("AI_OUTPUT_INVALID",value.errorCode());
         assertNull(value.resultId());assertNull(jdbc.queryForObject("SELECT active_operation_id FROM consultation_session WHERE id=?",String.class,session));
     }
-    @Test void fourRoundBudgetCannotRunIndefinitely()throws Exception{
+    @Test void roundBudgetCannotRunIndefinitely()throws Exception{
         var count=new java.util.concurrent.atomic.AtomicInteger();
         when(ai.chatWithTools(any(),eq("AGENT"),anyString())).thenAnswer(inv->tool("tool-"+count.incrementAndGet()));
-        when(tools.execute(anyString(),anyString(),anyString())).thenReturn(json.readTree("{\"spaceKey\":\"test-space\",\"hits\":[]}"));
-        var value=await(create());assertEquals("AGENT_BUDGET_EXCEEDED",value.errorCode());assertEquals(4,value.actualRounds());assertEquals(4,value.actualToolCalls());
-        verify(ai,times(4)).chatWithTools(any(),anyString(),anyString());
+        when(tools.enabled(anyString())).thenReturn(true);
+        when(tools.execute(anyString(),anyString(),any(),any(),anyString())).thenReturn(json.readTree("{\"spaceKey\":\"test-space\",\"hits\":[]}"));
+        var value=await(create());assertEquals("AGENT_BUDGET_EXCEEDED",value.errorCode());assertEquals(6,value.actualRounds());assertEquals(6,value.actualToolCalls());
+        verify(ai,times(6)).chatWithTools(any(),anyString(),anyString());
     }
     @Test void cancelClearsSessionAndLateModelCannotPublish()throws Exception{
         CountDownLatch entered=new CountDownLatch(1);release=new CountDownLatch(1);
@@ -162,5 +166,37 @@ class AgentIntegrationTest {
         Long id=create();await(id);
         assertThrows(BusinessException.class,()->agent.get(-1L,id));assertThrows(BusinessException.class,()->agent.cancel(-1L,id));
         mvc.perform(get("/api/patient/triage-runs/"+id)).andExpect(status().isUnauthorized());
+    }
+    @Test void historyRecoversStoredRunsAndRejectsOtherPatients()throws Exception{
+        when(ai.chatWithTools(any(),eq("AGENT"),anyString())).thenReturn(answer(candidate("[]")));
+        Long first=create();await(first);Long second=create();await(second);
+        mvc.perform(get("/api/patient/consultations/"+session+"/triage-runs").param("pageSize","1").header("Authorization","Bearer "+token))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.total").value(2))
+                .andExpect(jsonPath("$.data.items[0].id").value(second.toString()))
+                .andExpect(jsonPath("$.data.items[0].createdAt").exists());
+        assertEquals(first.toString(),agent.history(user,session,2,1).items().getFirst().id());
+        assertThrows(BusinessException.class,()->agent.history(-1L,session,1,20));
+        verify(ai,times(2)).chatWithTools(any(),anyString(),anyString());
+    }
+    @Test void softDeletionRetainsMessagesRunsResultsAndRejectsFurtherSessionUse()throws Exception{
+        version=consultations.updateSummary(user,session,version,summary("YES"),true).summaryVersion();
+        var completed=await(create());Long resultId=Long.valueOf(completed.resultId());
+        mvc.perform(delete("/api/patient/consultations/"+session).header("Authorization","Bearer "+token)).andExpect(status().isOk());
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM consultation_session WHERE id=? AND deleted_at IS NOT NULL",Integer.class,session));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM agent_run WHERE session_id=?",Integer.class,session));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM triage_result WHERE id=?",Integer.class,resultId));
+        assertFalse(agent.result(user,resultId).isCurrent());assertFalse(agent.result(user,resultId).canBook());
+        mvc.perform(get("/api/patient/consultations/"+session).header("Authorization","Bearer "+token)).andExpect(status().isNotFound());
+        mvc.perform(get("/api/patient/consultations/"+session+"/triage-runs").header("Authorization","Bearer "+token)).andExpect(status().isNotFound());
+        assertThrows(BusinessException.class,()->consultations.messages(user,session));verifyNoInteractions(ai);
+    }
+    @Test void activeTriagePreventsDeletionUntilCancelled()throws Exception{
+        CountDownLatch entered=new CountDownLatch(1);release=new CountDownLatch(1);
+        when(ai.chatWithTools(any(),eq("AGENT"),anyString())).thenAnswer(inv->{entered.countDown();try{release.await(5,TimeUnit.SECONDS);}catch(InterruptedException ignored){}return answer(candidate("[]"));});
+        Long id=create();assertTrue(entered.await(3,TimeUnit.SECONDS));
+        mvc.perform(delete("/api/patient/consultations/"+session).header("Authorization","Bearer "+token))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("SESSION_BUSY"));
+        assertTrue(agent.cancel(user,id));release.countDown();await(id);consultations.delete(user,session);
+        assertEquals("CANCELLED",agent.get(user,id).status());
     }
 }

@@ -35,24 +35,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ConsultationService {
-    private static final String SYSTEM_PROMPT = "你是医院的线上就诊信息助手，负责了解患者描述并提供一般性就医信息。"
-            + "你不是医生，不作疾病诊断、不代替医生、不提供处方或具体用药剂量；信息不足时先提出简短问题。"
-            + "如用户描述胸痛、严重呼吸困难、意识不清、大出血、突发偏瘫等紧急危险情况，立即建议拨打120或就近急诊，不要继续普通问诊。"
-            + "回答用简体中文、表达清楚，不夸大确定性，并提醒用户预约和诊疗以医院及医生安排为准。";
+    // 预问诊系统提示改为数据库模板 PRECONSULT_SYSTEM，兜底文本见 PromptService.DEFAULTS。
     private final ConsultationSessionMapper sessions;
     private final ConsultationMessageMapper messages;
     private final PatientProfileMapper patients;
     private final ModelFactory models;
     private final BusinessTime time;
+    private final com.shen.hospital.ai.prompt.PromptService prompts;
     private final com.fasterxml.jackson.databind.ObjectMapper json = new com.fasterxml.jackson.databind.ObjectMapper();
 
     public ConsultationService(ConsultationSessionMapper sessions, ConsultationMessageMapper messages,
-                               PatientProfileMapper patients, ModelFactory models, BusinessTime time) {
+                               PatientProfileMapper patients, ModelFactory models, BusinessTime time,
+                               com.shen.hospital.ai.prompt.PromptService prompts) {
         this.sessions = sessions;
         this.messages = messages;
         this.patients = patients;
         this.models = models;
         this.time = time;
+        this.prompts = prompts;
     }
 
     public record Prepared(String operationId, String sessionId, String assistantMessageId,
@@ -91,6 +91,17 @@ public class ConsultationService {
     public List<MessageView> messages(Long userId, Long sessionId) {
         owned(userId, sessionId);
         return messages.listBySession(sessionId).stream().map(MessageView::of).toList();
+    }
+
+    @Transactional(transactionManager = "mysqlTransactionManager")
+    public void delete(Long userId, Long sessionId) {
+        Long patientId = patientId(userId);
+        var session = sessions.lockById(sessionId);
+        if (session == null || !patientId.equals(session.getPatientId())) throw BusinessException.missing("问诊会话");
+        if (session.getActiveOperationId() != null)
+            throw BusinessException.conflict("SESSION_BUSY", "请先停止当前回答或导诊，再删除问诊记录");
+        if (sessions.softDelete(sessionId, patientId, time.now()) != 1)
+            throw BusinessException.conflict("SESSION_BUSY", "问诊状态已变化，请刷新后重试");
     }
 
     @Transactional(transactionManager = "mysqlTransactionManager")
@@ -138,7 +149,8 @@ public class ConsultationService {
         }
         models.requireConfigured();
         if (session.getActiveOperationId() != null) {
-            if (session.getOperationDeadline() != null && session.getOperationDeadline().isAfter(now))
+            if ("TRIAGE".equals(session.getActiveOperationType())
+                    || session.getOperationDeadline() != null && session.getOperationDeadline().isAfter(now))
                 throw BusinessException.conflict("SESSION_BUSY", "当前会话有一条消息正在处理，请稍候");
             var stale = messages.findAssistantByRequest(sessionId, session.getActiveOperationId());
             if (stale != null) messages.finish(stale.getId(), "FAILED", "AI_TIMEOUT");
@@ -176,7 +188,7 @@ public class ConsultationService {
         var history = messages.recentCompletedBefore(sessionId, userMessage.getId(), 20);
         Collections.reverse(history);
         List<ChatMessage> chatMessages = new ArrayList<>();
-        chatMessages.add(SystemMessage.from(SYSTEM_PROMPT));
+        chatMessages.add(SystemMessage.from(prompts.current(com.shen.hospital.ai.prompt.PromptService.PRECONSULT)));
         for (var item : history) {
             if ("USER".equals(item.getRole())) chatMessages.add(UserMessage.from(item.getContent()));
             else if ("ASSISTANT".equals(item.getRole())) chatMessages.add(AiMessage.from(item.getContent()));
@@ -220,6 +232,8 @@ public class ConsultationService {
         var session = sessions.lockById(sessionId);
         if (session == null || !patientId.equals(session.getPatientId())) throw BusinessException.missing("问诊会话");
         if (operationId == null || !operationId.equals(session.getActiveOperationId())) return false;
+        if (!"CHAT".equals(session.getActiveOperationType()))
+            throw BusinessException.conflict("OPERATION_TYPE_CONFLICT", "请在导诊页面停止当前导诊任务");
         var message = messages.findAssistantByRequest(sessionId, operationId);
         boolean changed = message != null && messages.finish(message.getId(), "CANCELLED", "CLIENT_CANCELLED") == 1;
         sessions.finishOperation(sessionId, operationId);

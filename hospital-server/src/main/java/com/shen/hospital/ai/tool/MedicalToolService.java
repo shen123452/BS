@@ -61,7 +61,7 @@ public class MedicalToolService {
         };
     }
 
-    private JsonNode search(JsonNode node, String traceId) {
+    public JsonNode search(JsonNode node, String traceId) {
         fields(node, Set.of("query", "topK"));
         String query = text(node, "query", 1000, true);
         JsonNode top = node.get("topK");
@@ -72,7 +72,7 @@ public class MedicalToolService {
         return json.valueToTree(knowledge.search(query, topK, traceId));
     }
 
-    private JsonNode findDepartments(JsonNode node) {
+    public JsonNode findDepartments(JsonNode node) {
         fields(node, Set.of("keyword"));
         String keyword = text(node, "keyword", 100, false).toLowerCase(Locale.ROOT);
         return json.valueToTree(Map.of("departments", directory().stream()
@@ -80,7 +80,7 @@ public class MedicalToolService {
                         || contains(d.description(), keyword)).toList()));
     }
 
-    private JsonNode findSchedules(JsonNode node) {
+    public JsonNode findSchedules(JsonNode node) {
         fields(node, Set.of("departmentId", "startDate", "endDate"));
         long id = positiveId(text(node, "departmentId", 20, true));
         var department = departments.selectById(id);

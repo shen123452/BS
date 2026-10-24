@@ -1,10 +1,10 @@
 # 缩减版双数据库初始化
 
-对应V2.2设计，共16张表。MySQL保存15张表，PostgreSQL保存1张向量表。本机执行结果见[本地数据库初始化记录](本地数据库初始化记录.md)，未连接或修改远程服务器。
+对应V2.2设计及新增 AI 凭据保存，共17张表。MySQL保存16张表，PostgreSQL保存1张向量表。本机初始执行结果见[本地数据库初始化记录](本地数据库初始化记录.md)，未连接或修改远程服务器。
 
 | 文件 | 用途 |
 |---|---|
-| [01_mysql_schema.sql](01_mysql_schema.sql) | 创建独立hospital_triage数据库及15张业务表 |
+| [01_mysql_schema.sql](01_mysql_schema.sql) | 创建独立hospital_triage数据库及16张业务/配置表 |
 | [02_postgresql_schema.sql](02_postgresql_schema.sql) | 在独立hospital_triage_vector数据库内启用vector扩展并创建向量表 |
 
 ## 执行方法
@@ -16,6 +16,8 @@
 持久层可以使用 MyBatis-Plus。建议 MySQL 业务库使用 MyBatis-Plus 的实体映射、基础 CRUD 和分页能力；预约扣号、取消返号、状态迁移、幂等检查、知识候选过滤等关键 SQL 使用自定义 Mapper SQL。PostgreSQL 向量库优先使用 JdbcTemplate/JdbcClient，避免为 pgvector 类型额外维护第二套 MyBatis-Plus 映射；若确需统一持久层，必须为两个数据源分别配置 SqlSessionFactory、事务管理器和 Mapper 扫描路径。
 
 两份脚本用于首次空库初始化；不包含DROP/TRUNCATE，不重复执行建表部分。MySQL DDL会隐式提交，失败可能留下已建的部分表，应根据报错检查执行进度，不能视为自动整体回滚。PostgreSQL建表、索引和触发器在单个事务内执行。对已有表升级须另写迁移，不能通过IF NOT EXISTS掩盖结构差异。
+
+2026-10-14 新增 AI 凭据表由后端启动时执行 `hospital-server/src/main/resources/db/ai-provider-credential.sql` 增量建立，仅该新增表使用 `IF NOT EXISTS`，不重建已有业务表。Key 由管理员“AI 配置”页保存，初始化 SQL 不含真实值。
 
 ## 类型与实现约定
 

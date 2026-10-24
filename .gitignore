@@ -9,7 +9,7 @@ hospital-web/dist/
 .vscode/
 .cache/
 hospital-server/data/
-.impeccable/review/
+.impeccable/
 缩减版/开题答辩工作区V2/
 *.pid
 *.hprof

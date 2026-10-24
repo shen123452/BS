@@ -20,6 +20,9 @@ public interface ConsultationSessionMapper extends BaseMapper<ConsultationSessio
     @Select("SELECT * FROM consultation_session WHERE id=#{id} AND patient_id=#{patientId} AND deleted_at IS NULL")
     ConsultationSession findOwned(@Param("id") Long id, @Param("patientId") Long patientId);
 
+    @Update("UPDATE consultation_session SET deleted_at=#{now},updated_at=#{now} WHERE id=#{id} AND patient_id=#{patientId} AND deleted_at IS NULL AND active_operation_id IS NULL")
+    int softDelete(@Param("id") Long id, @Param("patientId") Long patientId, @Param("now") LocalDateTime now);
+
     @Update("UPDATE consultation_session SET updated_at=CURRENT_TIMESTAMP(3) WHERE id=#{id} AND deleted_at IS NULL")
     int touch(Long id);
 

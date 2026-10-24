@@ -17,6 +17,8 @@ public class AgentRun {
     private String modelName;
     private String configFingerprint;
     private String promptHash;
+    private Long promptRevisionId;
+    private String promptContent;
     private String toolNames;
     private String knowledgeSnapshot;
     private String safetyRuleVersion;

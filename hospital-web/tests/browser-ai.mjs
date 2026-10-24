@@ -31,6 +31,7 @@ await context.route('**/api/**',async route => {
   if(path==='/admin/knowledge/search')return respond({hits:[{chunkId:'5',title:'资料来源（虚构）',sourceDescription:'隔离验证',documentVersion:'test-v1',score:0.82,excerpt:'咳嗽相关的虚构工程片段'}]})
   if(path==='/patient/consultations')return respond({items:[session],total:1,page:1,pageSize:100})
   if(path==='/patient/consultations/20')return respond(session)
+  if(path==='/patient/consultations/20/triage-runs')return respond({items:[],total:0,page:1,pageSize:10})
   if(path==='/patient/consultations/20/messages')return respond([{id:'1',role:'USER',content:'工程测试咳嗽',status:'COMPLETED'}])
   if(path==='/patient/consultations/20/summary'){
     submitted=request.postDataJSON()

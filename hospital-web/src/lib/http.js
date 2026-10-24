@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { expireSession } from './session.js'
 const client = axios.create({ baseURL: '/api', timeout: 20000 })
 client.interceptors.request.use(config => {
   const token = sessionStorage.getItem('hospital.token')
@@ -10,8 +11,7 @@ client.interceptors.response.use(response => response.data.data, cause => {
   const error = new Error(body?.message || (cause.code === 'ECONNABORTED' ? '请求超时，请重试。' : '暂时无法连接服务，请确认后端已启动后重试。'))
   Object.assign(error, { code: body?.code, traceId: body?.traceId, status: cause.response?.status })
   if (error.status === 401 && !cause.config?.url?.startsWith('/auth/')) {
-    sessionStorage.removeItem('hospital.token')
-    window.dispatchEvent(new Event('hospital-session-expired'))
+    expireSession()
   }
   return Promise.reject(error)
 })
@@ -19,6 +19,7 @@ export const get = (url, params) => client.get(url, { params: Object.fromEntries
 export const post = (url, data) => client.post(url, data)
 export const put = (url, data) => client.put(url, data)
 export const patch = (url, data) => client.patch(url, data)
+export const remove = url => client.delete(url)
 export async function allPages(url) {
   const first = await get(url, { pageSize: 100 })
   const items = [...first.items]

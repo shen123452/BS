@@ -31,3 +31,27 @@ test('SSE错误响应保留服务端错误码和问题编号', async () => {
     return true
   })
 })
+
+test('AI未配置的503保留原始错误，不触发登录过期', async t => {
+  const storage = globalThis.sessionStorage, browser = globalThis.window
+  let expired = false
+  globalThis.sessionStorage = { removeItem() { expired = true } }
+  globalThis.window = new EventTarget()
+  t.after(() => { globalThis.sessionStorage = storage; globalThis.window = browser })
+  const response = Response.json({ code:'AI_NOT_CONFIGURED', message:'请先配置百炼 DASHSCOPE_API_KEY', traceId:'trace-ai' }, { status:503 })
+  await assert.rejects(() => readSse(response, () => {}), error => error.status === 503 && error.code === 'AI_NOT_CONFIGURED')
+  assert.equal(expired,false)
+})
+
+test('流式请求收到401时清理登录并通知页面跳转', async t => {
+  const storage = globalThis.sessionStorage, browser = globalThis.window
+  const removed = []
+  let notified = false
+  globalThis.sessionStorage = { removeItem(key) { removed.push(key) } }
+  globalThis.window = new EventTarget()
+  window.addEventListener('hospital-session-expired', () => { notified = true })
+  t.after(() => { globalThis.sessionStorage = storage; globalThis.window = browser })
+  await assert.rejects(() => readSse(Response.json({code:'INVALID_TOKEN',message:'登录凭证无效或已过期'}, {status:401}), () => {}), error => error.status === 401)
+  assert.deepEqual(removed,['hospital.token'])
+  assert.equal(notified,true)
+})

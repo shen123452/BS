@@ -9,4 +9,8 @@ import org.springframework.validation.annotation.Validated;
 public record AiProperties(@NotBlank String baseUrl, String apiKey, @NotBlank String chatModel,
                            @NotBlank String embeddingModel, @Min(1) @Max(16000) int embeddingDimension,
                            @Min(1) @Max(120) int timeoutSeconds) {
+    @Override public String toString() {
+        return "AiProperties[baseUrl=" + baseUrl + ",apiKey=[REDACTED],chatModel=" + chatModel
+                + ",embeddingModel=" + embeddingModel + ",embeddingDimension=" + embeddingDimension + ",timeoutSeconds=" + timeoutSeconds + "]";
+    }
 }

@@ -24,6 +24,24 @@ public interface KnowledgeDocumentMapper extends BaseMapper<KnowledgeDocument> {
     @Select("SELECT * FROM knowledge_document WHERE status='QUEUED' ORDER BY id LIMIT 64")
     List<KnowledgeDocument> queued();
 
+    @Select("SELECT * FROM knowledge_document ORDER BY id")
+    List<KnowledgeDocument> allDocuments();
+
+    @Select("SELECT * FROM knowledge_document WHERE task_kind='REBUILD' ORDER BY id")
+    List<KnowledgeDocument> rebuilding();
+
+    @Select("SELECT COUNT(*) FROM knowledge_document WHERE status IN ('QUEUED','PARSING','CHUNKING','EMBEDDING')")
+    int activeCount();
+
+    @Update("UPDATE knowledge_document SET task_kind='REBUILD',status='QUEUED',target_space_key=#{spaceKey},embedded_chunks=0,task_operation_id=NULL,task_deadline=NULL,error_code=NULL,error_message=NULL")
+    int queueRebuild(String spaceKey);
+
+    @Update("UPDATE knowledge_document SET task_kind='INGEST' WHERE task_kind='REBUILD'")
+    int finishRebuild();
+
+    @Update("UPDATE knowledge_document SET status='QUEUED',target_space_key=#{spaceKey},embedded_chunks=0,error_code=NULL,error_message=NULL WHERE id=#{id} AND enabled=0 AND status IN ('READY','FAILED') AND task_kind='INGEST'")
+    int queueDisabledRebuild(@Param("id") Long id,@Param("spaceKey") String spaceKey);
+
     @Update("UPDATE knowledge_document SET status='PARSING', task_operation_id=#{operationId}, task_deadline=#{deadline}, target_space_key=#{spaceKey}, attempt_no=attempt_no+1, error_code=NULL, error_message=NULL WHERE id=#{id} AND status='QUEUED'")
     int claim(@Param("id") Long id, @Param("operationId") String operationId,
               @Param("deadline") LocalDateTime deadline, @Param("spaceKey") String spaceKey);
@@ -32,7 +50,7 @@ public interface KnowledgeDocumentMapper extends BaseMapper<KnowledgeDocument> {
     int progress(@Param("id") Long id, @Param("operationId") String operationId, @Param("status") String status,
                  @Param("total") int total, @Param("embedded") int embedded);
 
-    @Update("UPDATE knowledge_document SET status='READY', target_space_key=#{spaceKey}, total_chunks=#{total}, embedded_chunks=#{total}, enabled=0, task_operation_id=NULL, task_deadline=NULL, error_code=NULL, error_message=NULL WHERE id=#{id} AND task_operation_id=#{operationId} AND status='EMBEDDING'")
+    @Update("UPDATE knowledge_document SET status='READY', target_space_key=#{spaceKey}, total_chunks=#{total}, embedded_chunks=#{total}, enabled=IF(task_kind='REBUILD',enabled,0), task_operation_id=NULL, task_deadline=NULL, error_code=NULL, error_message=NULL WHERE id=#{id} AND task_operation_id=#{operationId} AND status='EMBEDDING'")
     int publish(@Param("id") Long id, @Param("operationId") String operationId, @Param("spaceKey") String spaceKey, @Param("total") int total);
 
     @Update("UPDATE knowledge_document SET status='FAILED', task_operation_id=NULL, task_deadline=NULL, error_code=#{code}, error_message=#{message} WHERE id=#{id} AND task_operation_id=#{operationId}")
