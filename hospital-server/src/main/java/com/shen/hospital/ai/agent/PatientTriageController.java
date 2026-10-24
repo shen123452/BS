@@ -26,6 +26,12 @@ public class PatientTriageController {
     public ApiResponse<TriageAgentService.RunView> get(@PathVariable @Positive Long id) {
         return ApiResponse.ok(agent.get(CurrentUser.get().id(),id));
     }
+    /** 事件订阅：cursor 之后的公开事件按序补齐；前端按 seq 去重，断线重连不丢事件也不发新任务。 */
+    @GetMapping("/triage-runs/{id}/events")
+    public ApiResponse<TriageAgentService.EventsView> events(@PathVariable @Positive Long id,
+            @RequestParam(defaultValue="0") @Min(0) int cursor) {
+        return ApiResponse.ok(agent.events(CurrentUser.get().id(),id,cursor));
+    }
     @GetMapping("/consultations/{id}/triage-runs")
     public ApiResponse<PageResult<TriageAgentService.RunView>> history(@PathVariable @Positive Long id,
             @RequestParam(defaultValue="1") @Min(1) long page,

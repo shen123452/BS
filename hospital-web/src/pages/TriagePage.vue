@@ -15,6 +15,8 @@ const form = reactive({ chiefComplaint:'', duration:'', severity:'', associated:
 const risks = [['chestPain','胸痛'],['severeBreathing','严重呼吸困难'],['unconscious','意识不清'],['majorBleeding','大出血'],['paralysis','突发偏瘫']]
 const anyDanger = computed(() => Object.values(form.riskAnswers).includes('YES'))
 const names = { QUEUED:'等待处理', RUNNING:'导诊中', SUCCEEDED:'已完成', DEGRADED:'信息或证据有限', FAILED:'处理失败', CANCELLED:'已停止' }
+const eventNames = { run_started:'任务已创建', step_started:'开始处理', step_finished:'处理完成', validation:'已校验', result_ready:'结果已生成', run_failed:'未完成', run_cancelled:'已停止' }
+const eventLog = ref([]); let eventCursor = 0, lastRunId = null
 let timer, disposed = false
 const storageKey = computed(() => `hospital.triage.${session.value?.id || route.params.sessionId}`)
 function snapshot() { return { chiefComplaint:form.chiefComplaint.trim(), duration:form.duration.trim(), severity:form.severity.trim(),
@@ -63,7 +65,14 @@ async function start() {
 async function poll(id = route.params.runId) {
   clearTimeout(timer); error.value = null
   try {
+    if (id !== lastRunId) { eventLog.value = []; eventCursor = 0; lastRunId = id }
     run.value = await get(`/patient/triage-runs/${id}`)
+    // 持久事件按 cursor 增量补齐：页面重开从 0 重放公开事件，前端按 seq 去重
+    try {
+      const feed = await get(`/patient/triage-runs/${id}/events`, { cursor:eventCursor })
+      if (feed.items?.length) eventLog.value.push(...feed.items.filter(e => !eventLog.value.some(x => x.seq === e.seq)))
+      eventCursor = Math.max(eventCursor, feed.latestSeq || 0)
+    } catch { eventLog.value = []; eventCursor = 0 }
     result.value = null
     if (!active.value) sessionStorage.removeItem(`hospital.triage.${run.value.sessionId}`)
     if (run.value.resultId) result.value = await get(`/patient/triage-results/${run.value.resultId}`)
@@ -102,8 +111,8 @@ onMounted(load)
   <template v-else-if="run">
     <section class="panel"><div class="section-heading"><h2>{{ names[run.status] || run.status }}</h2><el-button v-if="active" :loading="cancelling" @click="cancel">停止导诊</el-button><el-button v-else @click="poll()">刷新结果</el-button></div>
       <p v-if="run.errorMessage" class="danger-text">{{ run.errorMessage }}</p>
-      <ol class="agent-timeline" aria-live="polite"><li v-for="step in run.steps" :key="step.sequenceNo"><strong>{{ step.publicLabel }}</strong><span>{{ {RUNNING:'处理中',SUCCEEDED:'已完成',FAILED:'未完成',TIMEOUT:'查询超时'}[step.status] }}<small v-if="step.durationMs != null"> · {{ (step.durationMs / 1000).toFixed(1) }} 秒</small></span></li></ol>
-      <p v-if="!run.steps?.length" class="muted">任务已接收，等待处理。</p>
+      <ol v-if="eventLog.length" class="agent-timeline" aria-live="polite"><li v-for="event in eventLog" :key="event.seq"><strong>{{ event.label || eventNames[event.type] || event.type }}</strong><span v-if="event.type === 'step_finished'">{{ {SUCCEEDED:'已完成',FAILED:'未完成',TIMEOUT:'查询超时'}[event.status] || event.status }}<small v-if="event.durationMs != null"> · {{ (event.durationMs / 1000).toFixed(1) }} 秒</small></span><span v-else-if="event.type === 'result_ready'">就绪</span></li></ol>
+      <p v-else-if="!run.steps?.length" class="muted">任务已接收，等待处理。</p>
       <div v-if="!active && !result" class="form-actions"><router-link :to="`/patient/consultations/${run.sessionId}/summary`" class="el-button el-button--primary">重新核对症状</router-link><router-link to="/patient/appointments" class="el-button">普通预约</router-link></div>
     </section>
     <section v-if="result" class="panel triage-result"><h2>{{ result.riskLevel === 'EMERGENCY' ? '请及时急诊' : result.departmentName || '请补充信息后再导诊' }}</h2><p :class="result.riskLevel === 'EMERGENCY' ? 'triage-emergency' : 'preserve-text'">{{ result.reason }}</p>

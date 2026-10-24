@@ -20,6 +20,7 @@ public class AgentStore {
     private final AgentRunMapper runs;
     private final AgentStepMapper steps;
     private final TriageResultMapper results;
+    private final AgentRunEventMapper events;
     private final ConsultationSessionMapper sessions;
     private final PatientProfileMapper patients;
     private final ModelFactory models;
@@ -28,12 +29,24 @@ public class AgentStore {
     private final JdbcTemplate jdbc;
 
     public AgentStore(AgentRunMapper runs, AgentStepMapper steps, TriageResultMapper results,
-                      ConsultationSessionMapper sessions, PatientProfileMapper patients, ModelFactory models,
-                      ObjectMapper json, BusinessTime time, @Qualifier("mysqlDataSource") DataSource datasource) {
-        this.runs=runs; this.steps=steps; this.results=results; this.sessions=sessions; this.patients=patients;
+                      AgentRunEventMapper events, ConsultationSessionMapper sessions, PatientProfileMapper patients,
+                      ModelFactory models, ObjectMapper json, BusinessTime time, @Qualifier("mysqlDataSource") DataSource datasource) {
+        this.runs=runs; this.steps=steps; this.results=results; this.events=events; this.sessions=sessions; this.patients=patients;
         this.models=models; this.json=json; this.time=time; this.jdbc=new JdbcTemplate(datasource);
     }
     public record Accepted(AgentRun run, boolean created) {}
+
+    /** 追加一条运行事件；事件写入失败不阻断业务主流程。 */
+    private void record(Long runId, String type, java.util.function.Consumer<com.fasterxml.jackson.databind.node.ObjectNode> payload, String visibility) {
+        try {
+            var node=json.createObjectNode();
+            payload.accept(node);
+            var event=new AgentRunEvent();
+            event.setRunId(runId); event.setSequenceNo(events.maxSequence(runId)+1);
+            event.setEventType(type); event.setPayload(node.toString()); event.setVisibility(visibility);
+            events.insert(event);
+        } catch (RuntimeException ignored) { }
+    }
 
     @Transactional(transactionManager="mysqlTransactionManager", isolation=Isolation.READ_COMMITTED)
     public Accepted create(Long userId, Long sessionId, int version, String clientId, String traceId,
@@ -80,6 +93,7 @@ public class AgentStore {
         if (sessions.startTriage(sessionId, patient.getId(), version, run.getRunNo(), run.getDeadlineAt()) != 1)
             throw BusinessException.conflict("SESSION_BUSY", "当前会话有任务正在处理，请稍候");
         runs.insert(run);
+        record(run.getId(), "run_started", n -> n.put("label", "导诊任务已创建"), "PATIENT");
         return new Accepted(run, true);
     }
 
@@ -144,16 +158,23 @@ public class AgentStore {
         step.setRoundNo(round); step.setStepType(kind); step.setToolName(name); step.setToolCallId(callId);
         step.setStatus("RUNNING"); step.setPublicLabel(label); step.setStartedAt(time.now());
         steps.insert(step);
+        record(run.getId(), "step_started", n -> { n.put("label", label); n.put("stepType", kind); }, "PATIENT");
         return step;
     }
     public void endStep(AgentStep step, String status, String output, String evidence, String code) {
+        long duration=Math.max(0,java.time.Duration.between(step.getStartedAt(), time.now()).toMillis());
         jdbc.update("UPDATE agent_step SET status=?,output_summary=?,evidence_chunk_ids=?,error_code=?,finished_at=?,duration_ms=? WHERE id=? AND status='RUNNING'",
-                status, output, evidence, code, time.now(), Math.max(0,java.time.Duration.between(step.getStartedAt(), time.now()).toMillis()), step.getId());
+                status, output, evidence, code, time.now(), duration, step.getId());
+        record(step.getRunId(), "step_finished", n -> {
+            n.put("label", step.getPublicLabel()); n.put("stepType", step.getStepType());
+            n.put("status", status); n.put("durationMs", duration);
+        }, "PATIENT");
         if (!"SUCCEEDED".equals(status)) {
             jdbc.update("UPDATE ai_call_log SET status=?,finished_at=?,error_code=?,error_message=? WHERE step_id=? AND status='RUNNING'",
                     "TIMEOUT".equals(status)?"TIMEOUT":"FAILED",time.now(),code,"本次查询未完成",step.getId());
             jdbc.update("UPDATE mcp_tool_call_log SET status=?,finished_at=?,error_code=? WHERE step_id=? AND status='RUNNING'",
                     "TIMEOUT".equals(status)?"TIMEOUT":"FAILED",time.now(),code,step.getId());
+            record(step.getRunId(), "step_finished", n -> { n.put("label", step.getPublicLabel()); n.put("errorCode", code); }, "ADMIN");
         }
     }
     @Transactional(transactionManager="mysqlTransactionManager")
@@ -166,6 +187,8 @@ public class AgentStore {
         results.insert(result);
         runs.finish(run.getId(), state, rounds, tools, time.now(), null, null);
         sessions.finishTriage(run.getSessionId(), run.getRunNo(), result.getId());
+        record(run.getId(), "validation", n -> { n.put("label", "已完成科室、引用与号源校验"); n.put("status", state); }, "PATIENT");
+        record(run.getId(), "result_ready", n -> { n.put("label", "导诊结果已生成"); n.put("resultId", result.getId()); n.put("riskLevel", result.getRiskLevel()); }, "PATIENT");
         return true;
     }
     @Transactional(transactionManager="mysqlTransactionManager")
@@ -180,9 +203,15 @@ public class AgentStore {
                 "CANCELLED".equals(state)?"CANCELLED":"TIMEOUT".equals(stepStatus)?"TIMEOUT":"FAILED",time.now(),code,message,run.getId());
         jdbc.update("UPDATE mcp_tool_call_log SET status=?,finished_at=?,error_code=? WHERE run_id=? AND status='RUNNING'",
                 "CANCELLED".equals(state)?"CANCELLED":"TIMEOUT".equals(stepStatus)?"TIMEOUT":"FAILED",time.now(),code,run.getId());
+        record(run.getId(), "CANCELLED".equals(state)?"run_cancelled":"run_failed",
+                n -> n.put("label", message), "PATIENT");
+        record(run.getId(), "CANCELLED".equals(state)?"run_cancelled":"run_failed",
+                n -> { n.put("errorCode", code); n.put("state", state); }, "ADMIN");
     }
     public List<AgentRun> expired() { return runs.expired(time.now()); }
     public List<AgentRun> interrupted() { return runs.interrupted(); }
+    public List<AgentRunEvent> eventsAfter(Long runId,int cursor) { return events.after(runId,cursor,"PATIENT",200); }
+    public int latestEventSeq(Long runId) { return events.maxSequence(runId); }
     public static String hash(String value) {
         try { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8))); }
         catch (Exception ex) { throw new IllegalStateException(ex); }

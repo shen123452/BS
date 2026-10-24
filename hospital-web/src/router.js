@@ -33,6 +33,7 @@ const routes = [
     { path: 'prompts', component: () => import('./pages/AdminPromptsPage.vue'), meta: { title: 'Prompt 模板' } },
     { path: 'symptoms', component: () => import('./pages/AdminSymptomTagsPage.vue'), meta: { title: '症状标签' } },
     { path: 'agent-runs', component: () => import('./pages/AdminActivityPage.vue'), meta: { title: '导诊运行记录' } },
+    { path: 'ai-usage', component: () => import('./pages/AdminAiUsagePage.vue'), meta: { title: 'AI 调用观测' } },
     { path: 'statistics', component: () => import('./pages/AdminActivityPage.vue'), props:{ statistics:true }, meta: { title: '业务统计' } },
   ] },
   { path: '/:pathMatch(.*)*', redirect: () => homes[auth.user?.role] || '/login' },

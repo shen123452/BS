@@ -31,4 +31,9 @@ public class AdminAgentController {
     public ApiResponse<TriageAgentService.RunView> detail(@PathVariable @Positive Long id){
         return ApiResponse.ok(agent.adminDetail(id));
     }
+    /** 运行回放：模型/Prompt/工具/知识快照与预算，一次执行可定位版本与失败来源。 */
+    @GetMapping("/agent-runs/{id}/replay")
+    public ApiResponse<TriageAgentService.AdminRunView> replay(@PathVariable @Positive Long id){
+        return ApiResponse.ok(agent.adminReplay(id));
+    }
 }

@@ -50,6 +50,13 @@ public class TriageAgentService {
                              JsonNode doctorOptions,JsonNode missingInformation,LocalDateTime expiresAt,
                              boolean isCurrent,boolean canBook,String unavailableReason) {}
     public record Created(RunView run,long pollAfterMs) {}
+    public record EventItem(int seq,String type,String label,String stepType,String status,Long durationMs,LocalDateTime createdAt) {}
+    public record EventsView(String runId,String status,int latestSeq,int cursor,List<EventItem> items) {}
+    /** 管理员运行详情：在患者视图之上补充版本与快照，用于回放定位。 */
+    public record AdminRunView(RunView run,String runNo,String modelName,String configFingerprint,String promptHash,
+                               Long promptRevisionId,JsonNode toolNames,JsonNode knowledgeSnapshot,String safetyRuleVersion,
+                               int maxRounds,int maxToolCalls,LocalDateTime startedAt,LocalDateTime finishedAt,
+                               LocalDateTime deadlineAt,String traceId) {}
 
     public Created create(Long userId,Long sessionId,int version,String clientId,String traceId) {
         if(clientId==null || clientId.isBlank() || clientId.length()>64) throw BusinessException.invalid("请求号不合法");
@@ -75,6 +82,24 @@ public class TriageAgentService {
         return new PageResult<>(list.items().stream().map(this::view).toList(),list.total(),list.page(),list.pageSize());
     }
     public RunView adminDetail(Long id) { return view(store.detail(id)); }
+    /** 管理员回放视图：模型/Prompt/工具/知识版本快照与预算，一次执行可定位失败来源。 */
+    public AdminRunView adminReplay(Long id) {
+        var run=store.detail(id);
+        return new AdminRunView(view(run),run.getRunNo(),run.getModelName(),run.getConfigFingerprint(),run.getPromptHash(),
+                run.getPromptRevisionId(),parse(run.getToolNames()),parse(run.getKnowledgeSnapshot()),run.getSafetyRuleVersion(),
+                run.getMaxRounds(),run.getMaxToolCalls(),run.getStartedAt(),run.getFinishedAt(),run.getDeadlineAt(),run.getTraceId());
+    }
+    /** 患者事件订阅：cursor 之后的公开事件按序返回；断线重连从上次序号补齐，不重复不发新任务。 */
+    public EventsView events(Long userId,Long id,int cursor) {
+        var run=store.owned(userId,id);
+        var items=store.eventsAfter(run.getId(),cursor).stream()
+                .map(e -> { var payload=parse(e.getPayload());
+                    return new EventItem(e.getSequenceNo(),e.getEventType(),payload.path("label").asText(""),
+                            payload.path("stepType").asText(null),payload.path("status").asText(null),
+                            payload.path("durationMs").isNumber()?payload.path("durationMs").asLong():null,e.getCreatedAt()); })
+                .toList();
+        return new EventsView(run.getId().toString(),run.getStatus(),store.latestEventSeq(run.getId()),Math.max(cursor,0),items);
+    }
     private RunView view(AgentRun run) {
         var result=store.byRun(run.getId());
         return new RunView(run.getId().toString(),run.getSessionId().toString(),run.getStatus(),run.getActualRounds(),run.getActualToolCalls(),
