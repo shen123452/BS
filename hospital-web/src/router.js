@@ -28,6 +28,7 @@ const routes = [
     { path: 'schedules', component: () => import('./pages/SchedulesPage.vue'), meta: { title: '排班管理' } },
     { path: 'knowledge', component: () => import('./pages/AdminKnowledgePage.vue'), meta: { title: '知识库' } },
     { path: 'ai-settings', component: () => import('./pages/AdminAiSettingsPage.vue'), meta: { title: 'AI 配置' } },
+    { path: 'ai-models', component: () => import('./pages/AdminAiModelsPage.vue'), meta: { title: 'AI 模型配置' } },
     { path: 'tools', component: () => import('./pages/AdminToolsPage.vue'), meta: { title: '工具中心' } },
     { path: 'prompts', component: () => import('./pages/AdminPromptsPage.vue'), meta: { title: 'Prompt 模板' } },
     { path: 'symptoms', component: () => import('./pages/AdminSymptomTagsPage.vue'), meta: { title: '症状标签' } },

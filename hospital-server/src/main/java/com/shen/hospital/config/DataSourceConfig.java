@@ -23,7 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @MapperScan(basePackages = {"com.shen.hospital.auth.mapper", "com.shen.hospital.masterdata.mapper",
         "com.shen.hospital.consultation.mapper", "com.shen.hospital.knowledge.mapper", "com.shen.hospital.ai.agent",
         "com.shen.hospital.schedule.mapper", "com.shen.hospital.registration.mapper", "com.shen.hospital.record.mapper", "com.shen.hospital.ai.mapper",
-        "com.shen.hospital.ai.tool", "com.shen.hospital.ai.prompt"},
+        "com.shen.hospital.ai.tool", "com.shen.hospital.ai.prompt", "com.shen.hospital.ai.config"},
         sqlSessionFactoryRef = "mysqlSqlSessionFactory")
 public class DataSourceConfig {
     @Bean

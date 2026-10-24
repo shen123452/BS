@@ -1,14 +1,14 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { HomeFilled, Calendar, Tickets, User, OfficeBuilding, FirstAidKit, SwitchButton, Reading, DataAnalysis, List, Setting, Connection, ChatLineSquare, PriceTag } from '@element-plus/icons-vue'
+import { HomeFilled, Calendar, Tickets, User, OfficeBuilding, FirstAidKit, SwitchButton, Reading, DataAnalysis, List, Setting, Connection, ChatLineSquare, PriceTag, Cpu } from '@element-plus/icons-vue'
 import { auth, roleNames } from '../lib/auth.js'
 const router = useRouter(), route = useRoute()
 const patient = computed(() => auth.user?.role === 'PATIENT')
 const menus = computed(() => ({
   PATIENT: [['/patient/home','首页',HomeFilled],['/patient/consultations','AI问诊',FirstAidKit],['/patient/appointments','预约挂号',Calendar],['/patient/visits','我的就诊',Tickets],['/patient/profile','我的档案',User]],
   DOCTOR: [['/doctor/workbench','接诊工作台',Tickets],['/doctor/schedules','我的排班',Calendar]],
-  ADMIN: [['/admin/home','管理首页',HomeFilled],['/admin/users','用户管理',User],['/admin/departments','科室管理',OfficeBuilding],['/admin/doctors','医生管理',FirstAidKit],['/admin/schedules','排班管理',Calendar],['/admin/symptoms','症状标签',PriceTag],['/admin/knowledge','知识库',Reading],['/admin/ai-settings','AI 配置',Setting],['/admin/prompts','Prompt 模板',ChatLineSquare],['/admin/tools','工具中心',Connection],['/admin/agent-runs','导诊运行记录',List],['/admin/statistics','业务统计',DataAnalysis]],
+  ADMIN: [['/admin/home','管理首页',HomeFilled],['/admin/users','用户管理',User],['/admin/departments','科室管理',OfficeBuilding],['/admin/doctors','医生管理',FirstAidKit],['/admin/schedules','排班管理',Calendar],['/admin/symptoms','症状标签',PriceTag],['/admin/knowledge','知识库',Reading],['/admin/ai-settings','AI 配置',Setting],['/admin/ai-models','模型配置',Cpu],['/admin/prompts','Prompt 模板',ChatLineSquare],['/admin/tools','工具中心',Connection],['/admin/agent-runs','导诊运行记录',List],['/admin/statistics','业务统计',DataAnalysis]],
 }[auth.user?.role] || []))
 async function logout() { await router.replace('/login'); if (router.currentRoute.value.path === '/login') auth.clear() }
 </script>
