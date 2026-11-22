@@ -1,0 +1,455 @@
+page {
+  background-color: #F4F7FB;
+}
+
+.analysis-page {
+  min-height: 100vh;
+  background-color: #F4F7FB;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 顶部柔和浅蓝控制区 */
+.analysis-hero {
+  background: linear-gradient(180deg, #DCEEFF 0%, #EEF6FF 65%, #F4F7FB 100%);
+  padding: 16rpx 28rpx 26rpx;
+}
+
+.source-segments {
+  display: flex;
+  padding: 6rpx;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1rpx solid rgba(191, 219, 254, 0.8);
+  border-radius: 18rpx;
+}
+
+.segment {
+  flex: 1;
+  min-height: 76rpx;
+  border-radius: 14rpx;
+  color: #475569;
+  font-size: 27rpx;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.segment-active {
+  background: #FFFFFF;
+  color: #2563EB;
+  font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(37, 99, 235, 0.12);
+}
+
+.period-row {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.period-pill {
+  flex: 1;
+  min-height: 68rpx;
+  border-radius: 9999rpx;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1rpx solid rgba(203, 213, 225, 0.75);
+  color: #475569;
+  font-size: 25rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+}
+
+.period-pill-active {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  border-color: #1D4ED8;
+  color: #FFFFFF;
+  box-shadow: 0 6rpx 16rpx rgba(37, 99, 235, 0.24);
+}
+
+/* 主体内容区 */
+.analysis-body {
+  padding: 0 28rpx;
+}
+
+.state-card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 36rpx 28rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+}
+
+/* 空状态单卡片 */
+.empty-state {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 64rpx 36rpx 52rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+}
+
+.empty-badge {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 32rpx;
+  background: #EFF6FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 22rpx;
+}
+
+.empty-icon {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.empty-scope {
+  display: inline-block;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #1D4ED8;
+  background: #EFF6FF;
+  padding: 6rpx 18rpx;
+  border-radius: 9999rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-title {
+  font-size: 31rpx;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 12rpx;
+}
+
+.empty-tip {
+  font-size: 25rpx;
+  color: #64748B;
+  line-height: 1.65;
+}
+
+.empty-btn {
+  margin-top: 34rpx;
+  border-radius: 22rpx;
+}
+
+/* 状态条 */
+.analysis-status {
+  padding: 20rpx 24rpx;
+  margin-bottom: 22rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 6rpx 22rpx rgba(15, 23, 42, 0.045);
+}
+
+.status-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.status-scope {
+  font-size: 24rpx;
+  color: #475569;
+  font-weight: 500;
+}
+
+.status-reasons {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid #F1F5F9;
+}
+
+.status-reason {
+  font-size: 23rpx;
+  color: #64748B;
+  line-height: 1.6;
+}
+
+/* 报告卡片 */
+.report-section {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 26rpx 28rpx;
+  margin-bottom: 22rpx;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+}
+
+.report-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 14rpx;
+}
+
+.report-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.report-unit {
+  font-size: 23rpx;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.report-reading {
+  margin: 8rpx 0 6rpx;
+}
+
+.report-reading .number {
+  font-size: 64rpx;
+  color: #0F172A;
+  font-weight: 800;
+}
+
+.report-note {
+  margin-top: 14rpx;
+  font-size: 23rpx;
+  line-height: 1.65;
+  color: #64748B;
+}
+
+.agp-sub {
+  margin-top: 0;
+}
+
+.agp-toggle {
+  min-height: 60rpx;
+  padding: 0 18rpx;
+  font-size: 24rpx;
+  background: #EFF6FF;
+  border-radius: 9999rpx;
+}
+
+.agp-content {
+  margin-top: 18rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #F1F5F9;
+}
+
+.glucose-trend {
+  display: block;
+  width: 100%;
+  height: 180px;
+  margin: 12rpx 0;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+}
+
+/* 2列指标网格 */
+.metric-table {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+  margin-bottom: 22rpx;
+}
+
+.metric-line {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  min-width: 0;
+  box-shadow: 0 6rpx 22rpx rgba(15, 23, 42, 0.045);
+}
+
+.compact-highlight .mono-num {
+  color: #059669;
+  font-weight: 800;
+}
+
+.metric-label {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: #64748B;
+}
+
+.metric-reading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4rpx;
+}
+
+.metric-reading .mono-num {
+  font-size: 38rpx;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.metric-sep {
+  color: #94A3B8;
+  margin: 0 6rpx;
+  font-size: 26rpx;
+}
+
+.metric-sub {
+  width: 100%;
+  font-size: 21rpx;
+  color: #94A3B8;
+  overflow-wrap: anywhere;
+}
+
+/* TIR 胶囊进度条 */
+.tir-bar {
+  display: flex;
+  height: 20rpx;
+  margin: 18rpx 0 14rpx;
+  border-radius: 9999rpx;
+  overflow: hidden;
+  background: #F1F5F9;
+}
+
+.tir-seg { height: 100%; }
+.tir-seg.tar { background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); }
+.tir-seg.tir { background: linear-gradient(90deg, #10B981 0%, #059669 100%); }
+.tir-seg.tbr { background: linear-gradient(90deg, #EF4444 0%, #DC2626 100%); }
+
+.tir-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx 22rpx;
+  font-size: 23rpx;
+  color: #475569;
+  font-weight: 500;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.legend-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+}
+
+.dot-tar { background: #F59E0B; }
+.dot-tir { background: #10B981; }
+.dot-tbr { background: #EF4444; }
+
+/* AGP 分位图 */
+.agp-chart {
+  width: 100%;
+  height: 400rpx;
+  display: block;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  margin: 12rpx 0;
+}
+
+.agp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx 18rpx;
+  font-size: 23rpx;
+  color: #64748B;
+  margin: 14rpx 0;
+  font-weight: 500;
+}
+
+.agp-picker {
+  margin-top: 16rpx;
+}
+
+.agp-time {
+  min-height: 82rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1D4ED8;
+  background: #EFF6FF;
+  padding: 0 22rpx;
+  border-radius: 16rpx;
+}
+
+.picker-chevron {
+  width: 26rpx;
+  height: 26rpx;
+}
+
+.agp-detail {
+  padding: 18rpx 0;
+  margin-top: 10rpx;
+  border-top: 1rpx solid #F1F5F9;
+}
+
+.agp-reading {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 8rpx 0 6rpx;
+}
+
+/* 每日概览列表 */
+.daily-list {
+  border-top: 1rpx solid #F1F5F9;
+}
+
+.daily-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14rpx;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F1F5F9;
+}
+
+.daily-row:last-child {
+  border-bottom: none;
+  padding-bottom: 4rpx;
+}
+
+.daily-date {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #0F172A;
+  flex-shrink: 0;
+}
+
+.daily-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10rpx;
+}
+
+.daily-count {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #475569;
+  background: #F1F5F9;
+  padding: 4rpx 14rpx;
+  border-radius: 9999rpx;
+}
+
+.daily-avg {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #1D4ED8;
+}
+
+.daily-coverage {
+  font-size: 22rpx;
+  color: #059669;
+  background: #ECFDF5;
+  padding: 4rpx 12rpx;
+  border-radius: 9999rpx;
+  font-weight: 600;
+}

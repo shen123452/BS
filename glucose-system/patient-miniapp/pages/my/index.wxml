@@ -1,0 +1,99 @@
+<view class="profile-page">
+  <view class="profile-hero">
+    <view class="account-bar">
+      <view class="account-main" bindtap="goProfile" role="button" aria-label="编辑个人资料">
+        <view class="account-avatar">
+          <text wx:if="{{avatarInitial}}" class="avatar-initial">{{avatarInitial}}</text>
+          <image wx:else class="avatar-icon" src="/assets/icons/avatar-user.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="account-info">
+          <view class="account-name-row">
+            <text class="account-name">{{displayName}}</text>
+            <text wx:if="{{dataMode === 'DEMO'}}" class="hero-tag hero-tag-demo">演示</text>
+          </view>
+          <view class="account-meta-row">
+            <text class="account-id">ID: {{accountId}}</text>
+            <view class="phone-pill {{hasPhone ? 'phone-pill-bound' : ''}}">
+              <image class="phone-pill-icon" src="/assets/icons/phone-mini.svg" mode="aspectFit" aria-hidden="true" />
+              <text>{{phoneLabel}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="account-settings" bindtap="goProfile" hover-class="icon-hover" role="button" aria-label="资料设置">
+        <image class="settings-icon" src="/assets/icons/settings-hex.svg" mode="aspectFit" aria-hidden="true" />
+      </view>
+    </view>
+  </view>
+
+  <view class="profile-body">
+    <view wx:if="{{errorMsg}}" class="state-card">
+      <view class="form-error">{{errorMsg}}</view>
+      <button class="btn-plain mt" bindtap="load">重新加载</button>
+    </view>
+    <view wx:if="{{loading && !profile}}" class="state-card muted">正在加载档案…</view>
+
+    <block wx:if="{{profile}}">
+      <view class="menu-card">
+        <view class="menu-item" hover-class="menu-item-hover" bindtap="goProfile" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-profile.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label">个人资料</text>
+          <text class="menu-value">{{profileSummary}}</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="menu-divider" />
+
+        <view class="menu-item" hover-class="menu-item-hover" bindtap="goTargets" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-target.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label">血糖目标范围</text>
+          <text class="menu-value mono-num">{{targetSummaryText}}</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="menu-divider" />
+
+        <view class="menu-item" hover-class="menu-item-hover" bindtap="goMedication" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-medication.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label">用药计划与记录</text>
+          <text class="menu-value">方案与打卡</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="menu-divider" />
+
+        <view class="menu-item" hover-class="menu-item-hover" bindtap="goAlerts" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-alert.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label">异常预警提醒</text>
+          <text class="menu-value">查看提醒</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="menu-divider" />
+
+        <view class="menu-item" hover-class="menu-item-hover" bindtap="viewPrivacy" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-privacy.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label">隐私与使用说明</text>
+          <text class="menu-value">{{privacyDateText}}</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+      </view>
+
+      <view class="menu-card account-card">
+        <view class="menu-item {{accountBusy ? 'menu-item-disabled' : ''}}" hover-class="menu-item-hover" bindtap="handleLogout" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-logout.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label">退出登录</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="menu-divider" />
+        <view class="menu-item {{accountBusy ? 'menu-item-disabled' : ''}}" hover-class="menu-item-hover" bindtap="handleDelete" role="button">
+          <image class="menu-icon" src="/assets/icons/menu-delete.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="menu-label menu-label-danger">注销账号</text>
+          <text class="menu-value">清除全部数据</text>
+          <image class="menu-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+      </view>
+
+      <view class="profile-footer">
+        <view class="version-text">版本号 v1.0.0</view>
+        <view class="disclaimer-text">仅作健康管理辅助参考，不替代临床诊断</view>
+      </view>
+    </block>
+  </view>
+</view>

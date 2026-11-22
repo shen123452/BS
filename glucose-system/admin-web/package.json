@@ -1,0 +1,23 @@
+{
+  "name": "glucose-admin-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test": "node --test tests/*.test.js",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.38",
+    "vue-router": "^4.4.3",
+    "pinia": "^2.2.2",
+    "element-plus": "^2.8.3",
+    "@element-plus/icons-vue": "^2.3.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.6",
+    "@vitejs/plugin-vue": "^5.1.3"
+  }
+}

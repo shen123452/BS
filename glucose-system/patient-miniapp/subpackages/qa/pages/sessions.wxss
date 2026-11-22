@@ -1,0 +1,8 @@
+.session-list { display: flex; flex-direction: column; gap: 14rpx; margin-top: 20rpx; }
+.session-row { display: flex; align-items: center; gap: 14rpx; padding: 22rpx 24rpx; background: var(--color-surface); border: 1rpx solid var(--color-border); border-radius: 24rpx; }
+.session-main { flex: 1; min-width: 0; }
+.session-title { font-size: 28rpx; font-weight: 500; line-height: 1.5; }
+.session-meta { margin-top: 4rpx; font-size: 24rpx; color: var(--color-ink-muted); }
+.session-delete { color: var(--color-danger); font-size: 24rpx; flex: 0 0 auto; }
+.empty-state { background: var(--color-surface); border: 1rpx solid var(--color-border); border-radius: 24rpx; padding: 56rpx 24rpx; text-align: center; margin-top: 20rpx; }
+.empty-title { font-size: 28rpx; font-weight: 600; margin-bottom: 8rpx; }

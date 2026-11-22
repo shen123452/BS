@@ -1,0 +1,8 @@
+{
+  "title": "连续血糖监测与指尖血糖记录的区别",
+  "category": "数据解读",
+  "content": "适用范围：设备与记录方法科普，具体使用应遵照设备说明和医疗团队建议。\n连续葡萄糖监测（CGM）通过传感器估计细胞之间液体中的葡萄糖，通常每隔几分钟提供读数，可观察昼夜变化和趋势。指尖血糖（SMBG）用血糖仪检测一滴血，反映该测量时点的血糖；零散测量点不能解释为全天连续变化。\nCGM 设备的读取方式、校准要求和传感器更换时间因型号而异，不能假定所有设备用法相同。有些型号需要指尖测量进行校准。\n怀疑 CGM 读数准确性或收到警报时，可能需要用标准指尖血糖仪对照确认；应按设备说明和既定诊疗方案处理，不能单凭问答自行调药。报警提示过低或过高时应及时采取既定措施或求助。测量频率、个人目标与报警设置应向医疗团队确认。",
+  "sourceTitle": "美国 NIH/NIDDK — Continuous Glucose Monitoring（中文摘要）",
+  "sourceUrl": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes/continuous-glucose-monitoring",
+  "sourceVersion": "原文复审 2023-06；网页核对 2026-10-25；中文摘要；非临床审核"
+}

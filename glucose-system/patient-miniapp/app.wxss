@@ -1,0 +1,190 @@
+/* 设计令牌：现代健康科技风 (Modern Health-Tech) 患者血糖小程序 */
+page {
+  --color-ink: #0F172A;
+  --color-ink-muted: #475569;
+  --color-ink-faint: #64748B;
+  --color-surface: #FFFFFF;
+  --color-canvas: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  
+  --color-primary: #2563EB;
+  --color-primary-strong: #1D4ED8;
+  --color-accent: #EF4444;
+  --color-info: #0284C7;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-demo: #7C3AED;
+  
+  --color-surface-subtle: #F1F5F9;
+  --color-danger-subtle: #FEF2F2;
+  --color-warning-subtle: #FFFBEB;
+  --color-success-subtle: #ECFDF5;
+  --color-info-subtle: #F0F9FF;
+
+  --shadow-card: 0 4rpx 18rpx rgba(15, 23, 42, 0.05), 0 1rpx 4rpx rgba(15, 23, 42, 0.03);
+  --shadow-card-elevated: 0 12rpx 32rpx rgba(15, 23, 42, 0.08), 0 2rpx 8rpx rgba(15, 23, 42, 0.04);
+  --shadow-btn: 0 8rpx 22rpx rgba(37, 99, 235, 0.28);
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 28rpx;
+  line-height: 1.55;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { padding: 24rpx 28rpx calc(54rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.page-title { font-size: 42rpx; font-weight: 700; line-height: 1.3; color: var(--color-ink); letter-spacing: -0.01em; }
+.page-subtitle { font-size: 25rpx; line-height: 1.6; color: var(--color-ink-muted); margin-top: 6rpx; }
+.page-heading { margin-bottom: 26rpx; }
+
+/* 现代卡片设计：更饱满圆角、柔和微阴影、精工边框 */
+.card {
+  background: var(--color-surface);
+  border: 1rpx solid rgba(226, 232, 240, 0.85);
+  border-radius: 28rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+.card:active {
+  transform: scale(0.995);
+}
+.card-title { font-size: 30rpx; font-weight: 700; line-height: 1.4; color: var(--color-ink); margin-bottom: 14rpx; letter-spacing: -0.01em; }
+.section-heading {
+  display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
+  font-size: 28rpx; font-weight: 600; margin: 32rpx 0 16rpx; color: var(--color-ink);
+}
+.page-footnote { font-size: 24rpx; line-height: 1.7; text-align: center; color: var(--color-ink-faint); margin-top: 28rpx; }
+.muted { color: var(--color-ink-muted); font-size: 25rpx; line-height: 1.6; }
+.mono-num, .number { font-variant-numeric: tabular-nums; }
+.number { font-size: 68rpx; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em; color: var(--color-ink); }
+.unit { font-size: 24rpx; color: var(--color-ink-muted); margin-left: 6rpx; font-weight: 500; }
+.row { display: flex; align-items: center; }
+.gap { gap: 16rpx; }
+.flex1 { flex: 1; min-width: 0; }
+.mt { margin-top: 20rpx; }
+.tap-active { background-color: #F1F5F9; }
+
+/* 现代标签 */
+.tag {
+  display: inline-flex; align-items: center; gap: 6rpx;
+  padding: 3rpx 14rpx; border-radius: 9999rpx; font-size: 22rpx; line-height: 32rpx; font-weight: 600;
+  border: 1rpx solid transparent; white-space: nowrap;
+}
+.tag-real, .tag-info { color: var(--color-info); background: var(--color-info-subtle); border-color: #BAE6FD; }
+.tag-demo { color: var(--color-demo); background: #F3E8FF; border-color: #DDD6FE; }
+.tag-warn { color: var(--color-warning); background: var(--color-warning-subtle); border-color: #FDE68A; }
+.tag-danger { color: var(--color-danger); background: var(--color-danger-subtle); border-color: #FECACA; }
+.tag-success { color: var(--color-success); background: var(--color-success-subtle); border-color: #A7F3D0; }
+.tag-muted { color: var(--color-ink-muted); background: var(--color-surface-subtle); border-color: var(--color-border); }
+
+/* 主副按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #FFFFFF;
+  border-radius: 20rpx; font-size: 30rpx; font-weight: 600;
+  min-height: 92rpx; display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-btn);
+  letter-spacing: 0.02em;
+  transition: all 0.15s ease;
+}
+.btn-primary:active { transform: scale(0.985); opacity: 0.92; }
+.btn-primary::after { border: none; }
+.btn-primary[disabled] { opacity: .45; box-shadow: none; }
+
+.btn-plain {
+  background: var(--color-surface); color: var(--color-primary);
+  border: 1rpx solid var(--color-border-strong); border-radius: 20rpx;
+  font-size: 28rpx; font-weight: 600; min-height: 88rpx;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.btn-plain:active { transform: scale(0.985); background: #F8FAFC; }
+.btn-plain::after { border: none; }
+.btn-danger-plain { color: var(--color-danger); border-color: #FECACA; }
+
+/* 胶囊 Chip */
+.chip {
+  padding: 10rpx 26rpx; border-radius: 12rpx; font-size: 25rpx; font-weight: 500;
+  border: 1rpx solid var(--color-border);
+  background: var(--color-surface); color: var(--color-ink-muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+}
+.chip-active {
+  border-color: var(--color-primary); color: #FFFFFF;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  font-weight: 600;
+  box-shadow: 0 4rpx 14rpx rgba(37, 99, 235, 0.25);
+}
+
+.form-item { margin-bottom: 28rpx; }
+.form-label { font-size: 25rpx; font-weight: 600; color: var(--color-ink); margin-bottom: 12rpx; display: block; }
+.form-input {
+  border: 1rpx solid var(--color-border-strong); border-radius: 16rpx;
+  min-height: 92rpx; padding: 18rpx 24rpx; font-size: 30rpx; background: var(--color-surface);
+  box-sizing: border-box; color: var(--color-ink);
+  transition: border-color 0.2s ease;
+}
+.form-input:focus { border-color: var(--color-primary); }
+.form-help { font-size: 24rpx; line-height: 1.6; color: var(--color-ink-muted); margin-top: 8rpx; }
+.form-error { font-size: 24rpx; color: var(--color-danger); margin-top: 8rpx; }
+
+.text-button {
+  min-height: 88rpx; padding: 0 10rpx; margin: 0; display: inline-flex; align-items: center; justify-content: center;
+  color: var(--color-primary); background: transparent; border: none; font-size: 26rpx; font-weight: 600;
+  line-height: 1.4; border-radius: 8rpx;
+}
+.text-button::after { border: none; }
+.text-button[disabled] { color: var(--color-ink-faint); opacity: .55; }
+button { box-sizing: border-box; }
+button.btn-primary, button.btn-plain { width: 100%; margin-left: 0; margin-right: 0; padding: 0 24rpx; line-height: 1.4; }
+button.btn-primary.mt, button.btn-plain.mt { margin-top: 20rpx; }
+button.row.btn-primary, button.row.btn-plain,
+.row > button.btn-primary, .row > button.btn-plain,
+.record-toolbar > button.btn-primary, .record-toolbar > button.btn-plain { width: auto; }
+button.btn-primary[disabled] { background: var(--color-primary); color: #FFFFFF; opacity: .4; }
+button.btn-plain[disabled] { color: var(--color-ink-faint); border-color: var(--color-border); }
+button.text-button { width: auto; }
+.chip { min-height: 88rpx; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; }
+
+/* 记录流/账本风格列表 */
+.ledger-list { border-top: 1rpx solid var(--color-border); }
+.ledger-row {
+  display: flex; align-items: center; gap: 16rpx; padding: 22rpx 0;
+  border-bottom: 1rpx solid #F1F5F9;
+}
+.ledger-main { flex: 1; min-width: 0; }
+.ledger-title { font-size: 28rpx; font-weight: 600; color: var(--color-ink); }
+.ledger-meta { font-size: 24rpx; color: var(--color-ink-muted); margin-top: 4rpx; }
+.ledger-value { font-size: 38rpx; font-weight: 700; color: var(--color-ink); }
+.ledger-value small { font-size: 24rpx; color: var(--color-ink-muted); font-weight: 400; margin-left: 4rpx; }
+
+/* iOS 风格分段选择器 (Segmented Control) */
+.source-segments {
+  display: flex; background: #F1F5F9; padding: 6rpx; border-radius: 18rpx;
+  position: relative;
+}
+.source-segment {
+  flex: 1; min-width: 0; min-height: 84rpx; border-radius: 14rpx;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-ink-muted); font-size: 27rpx; font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.source-segment.selected {
+  background: #FFFFFF; color: var(--color-primary); font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.08);
+}
+
+.section-link { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.success-feedback {
+  padding: 22rpx 26rpx; border-radius: 18rpx; background: var(--color-success-subtle);
+  color: var(--color-success); border: 1rpx solid #A7F3D0; font-weight: 500;
+}

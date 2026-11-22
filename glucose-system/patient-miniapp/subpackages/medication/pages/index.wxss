@@ -1,0 +1,30 @@
+.med-tabs { display: flex; padding: 4rpx; background: var(--color-canvas); border-radius: 8rpx; margin-bottom: 20rpx; }
+.med-tab { flex: 1; margin: 0; border-radius: 6rpx; color: var(--color-ink-muted); background: transparent; min-height: 88rpx; font-size: 26rpx; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+.med-tab::after { border: none; }
+.med-tab + .med-tab { border-left: none; }
+.med-tab-active { background: var(--color-surface); color: var(--color-primary); font-weight: 600; box-shadow: 0 1rpx 4rpx rgba(16,24,40,.06); }
+.date-row { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; margin-bottom: 18rpx; flex-wrap: wrap; }
+.date-picker { min-height: 88rpx; display: flex; align-items: center; font-size: 26rpx; color: var(--color-primary); }
+.date-hint { margin-left: 10rpx; font-size: 24rpx; color: var(--color-ink-muted); }
+.day-summary { margin: 0 0 16rpx; padding: 16rpx 20rpx; background: var(--color-info-subtle); border-radius: 8rpx; display: flex; align-items: baseline; gap: 8rpx; flex-wrap: wrap; }
+.summary-label { font-size: 24rpx; color: var(--color-ink-muted); }
+.summary-value { font-size: 25rpx; font-weight: 500; }
+.summary-extra { font-size: 24rpx; color: var(--color-ink-muted); }
+.med-list { display: flex; flex-direction: column; gap: 14rpx; }
+.med-item { display: flex; gap: 16rpx; padding: 24rpx; background: var(--color-surface); border: 1rpx solid var(--color-border); border-radius: 24rpx; }
+.med-time-col { flex: 0 0 140rpx; padding-top: 2rpx; }
+.med-time { display: block; font-size: 28rpx; font-weight: 600; color: var(--color-primary); }
+.med-status { display: block; margin-top: 4rpx; font-size: 24rpx; line-height: 1.5; color: var(--color-ink-muted); }
+.status-taken { color: var(--color-success); }
+.med-main { flex: 1; min-width: 0; }
+.med-name { font-size: 30rpx; font-weight: 600; overflow-wrap: break-word; word-break: break-all; }
+.med-dose { font-size: 24rpx; margin-top: 4rpx; word-break: break-all; }
+.med-instruction { font-size: 24rpx; line-height: 1.6; color: var(--color-ink-muted); margin-top: 4rpx; word-break: break-all; }
+.med-taken { font-size: 24rpx; color: var(--color-ink-faint); margin-top: 4rpx; }
+.med-actions { margin-top: 18rpx; flex-wrap: wrap; }
+.med-actions .btn-primary, .med-actions .btn-plain { min-width: 160rpx; font-size: 24rpx; }
+.undo-button { margin-top: 10rpx; margin-left: -8rpx; font-size: 24rpx; }
+.add-plan { margin-bottom: 12rpx; }
+.closed-toggle { margin-top: 16rpx; }
+.empty-state { background: var(--color-surface); border: 1rpx solid var(--color-border); border-radius: 24rpx; padding: 56rpx 24rpx; text-align: center; }
+.empty-title { font-size: 28rpx; font-weight: 600; margin-bottom: 8rpx; }

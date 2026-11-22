@@ -1,0 +1,178 @@
+<view class="analysis-page">
+  <view class="analysis-hero">
+    <view class="source-segments">
+      <view class="segment {{dataSource === 'SMBG' ? 'segment-active' : ''}}" data-source="SMBG" bindtap="setSource" role="button">指尖血糖</view>
+      <view class="segment {{dataSource === 'CGM' ? 'segment-active' : ''}}" data-source="CGM" bindtap="setSource" role="button">连续监测</view>
+    </view>
+
+    <view class="period-row">
+      <view class="period-pill {{days === 7 ? 'period-pill-active' : ''}}" data-days="7" bindtap="setDays" role="button">近 7 天</view>
+      <view class="period-pill {{days === 14 ? 'period-pill-active' : ''}}" data-days="14" bindtap="setDays" role="button">近 14 天</view>
+      <view class="period-pill {{days === 30 ? 'period-pill-active' : ''}}" data-days="30" bindtap="setDays" role="button">近 30 天</view>
+    </view>
+  </view>
+
+  <view class="analysis-body">
+    <view wx:if="{{errorMsg}}" class="state-card">
+      <view class="form-error">{{errorMsg}}</view>
+      <button class="btn-plain mt" bindtap="load">重试</button>
+    </view>
+    <view wx:elif="{{loading}}" class="state-card muted">正在汇总完整日数据…</view>
+
+    <block wx:elif="{{summary}}">
+      <view wx:if="{{summary.pointCount === 0}}" class="empty-state">
+        <view class="empty-badge">
+          <image class="empty-icon" src="/assets/icons/analysis-empty.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="empty-scope">近 {{days}} 天 · {{dataSource === 'SMBG' ? '指尖血糖' : '连续监测'}} · {{summary.startDate}} 起，不含今日</view>
+        <view class="empty-title">这段时间还没有{{dataSource === 'SMBG' ? '指尖血糖' : '连续监测'}}记录</view>
+        <view class="empty-tip">分析基于已结束的完整日统计，今日测量可在「记录」页查看。</view>
+        <button wx:if="{{dataSource === 'SMBG'}}" class="btn-primary empty-btn" bindtap="goRecord">去记录血糖</button>
+        <button wx:else class="btn-primary empty-btn" bindtap="goImport">导入连续监测数据</button>
+      </view>
+
+      <block wx:else>
+        <view class="analysis-status">
+          <view class="status-top">
+            <view class="tag {{statusTag[0]}}">{{statusTag[1]}}</view>
+            <view class="status-scope">近 {{days}} 天 · {{summary.startDate}} 起（不含今日）</view>
+          </view>
+          <view wx:if="{{reasons.length}}" class="status-reasons">
+            <view wx:for="{{reasons}}" wx:key="*this" class="status-reason">· {{item}}</view>
+          </view>
+        </view>
+
+        <view class="report-section trend-block">
+          <view class="report-heading">
+            <view class="report-title">血糖趋势</view>
+            <view class="report-unit">mmol/L</view>
+          </view>
+          <canvas wx:if="{{trend.points.length}}" type="2d" id="glucose-trend" class="glucose-trend" aria-label="血糖趋势图，详细数值见每日概览和记录列表" />
+          <view wx:else class="muted">暂无可展示的趋势点</view>
+          <view class="report-note">{{dataSource === 'CGM' ? '缺测区间断开显示。' : '手工测量以独立点展示，不推断全天变化。'}} 展示 {{trend.displayPoints}} / {{trend.totalPoints}} 个点；统计使用全部有效记录。</view>
+        </view>
+
+        <view class="metric-table">
+          <view class="metric-line">
+            <view class="metric-label">平均值</view>
+            <view class="metric-reading"><text class="mono-num">{{summary.avgGlucose === null ? '—' : summary.avgGlucose}}</text><text class="unit">mmol/L</text></view>
+          </view>
+          <view wx:if="{{summary.tir != null}}" class="metric-line compact-highlight">
+            <view class="metric-label">目标内时间 TIR</view>
+            <view class="metric-reading"><text class="mono-num">{{summary.tir}}%</text></view>
+          </view>
+          <view wx:if="{{summary.gmi != null}}" class="metric-line">
+            <view class="metric-label">GMI 估算</view>
+            <view class="metric-reading"><text class="mono-num">{{summary.gmi}}%</text></view>
+          </view>
+          <view class="metric-line">
+            <view class="metric-label">最高 / 最低</view>
+            <view class="metric-reading"><text class="mono-num">{{summary.maxGlucose === null ? '—' : summary.maxGlucose}}</text><text class="metric-sep">/</text><text class="mono-num">{{summary.minGlucose === null ? '—' : summary.minGlucose}}</text><text class="unit">mmol/L</text></view>
+            <view class="metric-sub">{{summary.maxAt}} / {{summary.minAt}}</view>
+          </view>
+          <view class="metric-line">
+            <view class="metric-label">波动程度（SD）</view>
+            <view class="metric-reading"><text class="mono-num">{{summary.sd === null ? '样本不足' : summary.sd}}</text><text wx:if="{{summary.sd !== null}}" class="unit">mmol/L</text></view>
+          </view>
+          <view class="metric-line">
+            <view class="metric-label">相对波动（CV）</view>
+            <view class="metric-reading"><text class="mono-num">{{summary.cv === null ? '样本不足' : summary.cv + '%'}}</text></view>
+          </view>
+        </view>
+
+        <view wx:if="{{summary.measurementInRangeRate !== null}}" class="report-section">
+          <view class="report-heading">
+            <view class="report-title">测量达标率</view>
+            <view class="report-unit">按测量类型目标</view>
+          </view>
+          <view class="report-reading"><text class="number mono-num">{{summary.measurementInRangeRate}}%</text></view>
+          <view class="report-note">{{summary.inTargetCount}} 次符合目标 / {{summary.eligiblePointCount}} 次有目标的测量；另有 {{summary.unconfiguredTargetCount}} 次未设置对应类型目标，未计入。这是测量样本统计，不能代表全天处于目标范围的时间占比。</view>
+        </view>
+
+        <view wx:if="{{summary.tir !== null}}" class="report-section">
+          <view class="report-heading">
+            <view class="report-title">目标范围内时间（TIR）</view>
+            <view class="report-unit">目标 {{summary.targetLow}}–{{summary.targetHigh}} mmol/L</view>
+          </view>
+          <view class="report-reading"><text class="number mono-num">{{summary.tir}}%</text></view>
+          <view class="tir-bar">
+            <view class="tir-seg tar" style="width: {{summary.tar}}%"></view>
+            <view class="tir-seg tir" style="width: {{summary.tir}}%"></view>
+            <view class="tir-seg tbr" style="width: {{summary.tbr}}%"></view>
+          </view>
+          <view class="tir-legend">
+            <view class="legend-item"><view class="legend-dot dot-tar" /><text>高于目标 {{summary.tar}}%</text></view>
+            <view class="legend-item"><view class="legend-dot dot-tir" /><text>目标内 {{summary.tir}}%</text></view>
+            <view class="legend-item"><view class="legend-dot dot-tbr" /><text>低于目标 {{summary.tbr}}%</text></view>
+          </view>
+          <view class="report-note">数据充分性 {{adequacyPct}}%，有效监测 {{validHours}} 小时。</view>
+        </view>
+
+        <view wx:if="{{dataSource === 'CGM'}}" class="report-section">
+          <view class="report-heading">
+            <view class="report-title">日间血糖分布</view>
+            <button class="text-button agp-toggle" bindtap="toggleAgpDetails">{{showAgpDetails ? '收起说明' : '查看分布与说明'}}</button>
+          </view>
+          <view class="report-note agp-sub">30 分钟分位带 · 保留数据缺口</view>
+          <view wx:if="{{showAgpDetails}}" class="agp-content">
+            <view wx:if="{{agpLoading}}" class="muted">正在汇总各时段的分布…</view>
+            <view wx:elif="{{agpError}}"><view class="form-error">{{agpError}}</view><button class="btn-plain mt" bindtap="retryAgp">重新加载分布</button></view>
+            <block wx:elif="{{agp}}">
+              <block wx:if="{{agp.qualifiedSlotCount > 0}}">
+                <canvas type="2d" id="agp-chart" class="agp-chart" bindtouchend="touchAgp" aria-label="30分钟日间分位分布图，下方选择时段可查看详细数值" />
+                <view class="agp-legend"><text>浅色 P5–P95</text><text>深色 P25–P75</text><text>实线中位数</text><text>虚线目标</text></view>
+                <view class="agp-picker">
+                  <view class="form-label">查看时段</view>
+                  <picker range="{{agpTimes}}" value="{{selectedAgpIndex}}" bindchange="selectAgp">
+                    <view class="agp-time">
+                      <text>{{agpTimes[selectedAgpIndex]}} 起的半小时</text>
+                      <image class="picker-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+                    </view>
+                  </picker>
+                </view>
+                <view wx:if="{{selectedAgp}}" class="agp-detail">
+                  <view class="muted">覆盖 {{selectedAgp.coveredDays}} 个不同日期 · {{selectedAgp.sampleCount}} 个点</view>
+                  <view wx:if="{{selectedAgp.p50 !== null}}">
+                    <view class="agp-reading mono-num">中位数 {{selectedAgp.p50}} mmol/L</view>
+                    <view class="muted">P25–P75：{{selectedAgp.p25}} – {{selectedAgp.p75}}</view>
+                    <view class="muted">P5–P95：{{selectedAgp.p5}} – {{selectedAgp.p95}} mmol/L</view>
+                  </view>
+                  <view wx:else class="muted">此时段覆盖不足 7 个不同日期，未计算分位数。</view>
+                </view>
+                <view class="report-note">48 个半小时时段中，{{agp.qualifiedSlotCount}} 个达到覆盖门槛。空白为数据不足，未进行补值。目标参考 {{agp.targetLow}} – {{agp.targetHigh}} mmol/L。</view>
+              </block>
+              <view wx:else class="muted">至少需要 14 个完整日、整体覆盖率达到 70%，且每个时段覆盖 7 个不同日期。当前数据不足，暂不展示分布图。</view>
+              <view class="report-note">这是 30 分钟分辨率的 AGP 风格工程展示。分位带表示数据分布，不是置信区间，也不等同于临床认证报告。</view>
+            </block>
+          </view>
+        </view>
+
+        <view wx:if="{{summary.gmi != null}}" class="report-section">
+          <view class="report-heading">
+            <view class="report-title">血糖管理指标（GMI）</view>
+            <view class="report-unit">由合格 CGM 均值估算</view>
+          </view>
+          <view class="report-reading"><text class="number mono-num">{{summary.gmi}}%</text></view>
+          <view class="report-note">不等于实验室实测 HbA1c，不能据此自行调整用药。</view>
+        </view>
+
+        <view class="report-section">
+          <view class="report-heading">
+            <view class="report-title">每日概览</view>
+            <view class="report-unit">已结束完整日</view>
+          </view>
+          <view class="daily-list">
+            <view wx:for="{{daily}}" wx:key="date" class="daily-row">
+              <view class="daily-date mono-num">{{item.date}}</view>
+              <view class="daily-meta">
+                <text class="daily-count">{{item.count}} 条</text>
+                <text class="daily-avg mono-num">均值 {{item.avg === null ? '—' : item.avg}}</text>
+                <text wx:if="{{item.coverage !== null}}" class="daily-coverage mono-num">覆盖 {{item.coverage}}%</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </block>
+  </view>
+</view>

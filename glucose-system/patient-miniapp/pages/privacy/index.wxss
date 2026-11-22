@@ -1,0 +1,4 @@
+.policy-page { font-size: 28rpx; line-height: 1.85; }
+.policy-section { padding-bottom: 8rpx; }
+.policy-section .section-heading { margin-top: 30rpx; }
+.policy-copy { color: var(--color-ink-muted); }

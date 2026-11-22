@@ -1,0 +1,69 @@
+<view class="page medication-page">
+  <view class="page-heading"><view><view class="page-title">用药记录</view><view class="page-subtitle">按已有医嘱，记下每一次服药</view></view></view>
+
+  <view class="med-tabs">
+    <button class="med-tab {{tab === 'records' ? 'med-tab-active' : ''}}" disabled="{{savingId != null}}" data-tab="records" bindtap="switchTab">服药记录</button>
+    <button class="med-tab {{tab === 'plans' ? 'med-tab-active' : ''}}" disabled="{{savingId != null}}" data-tab="plans" bindtap="switchTab">我的计划</button>
+  </view>
+
+  <view wx:if="{{tab === 'records'}}" class="date-row">
+    <picker mode="date" value="{{date}}" start="{{minDate}}" end="{{today}}" disabled="{{savingId != null}}" bindchange="changeDate"><view class="date-picker">{{date}}<text class="date-hint"> 选择日期</text></view></picker>
+    <button wx:if="{{date !== today}}" class="text-button" disabled="{{savingId != null}}" bindtap="goToday">回到今天</button>
+  </view>
+
+  <view wx:if="{{errorMsg}}" class="card"><view class="form-error">{{errorMsg}}</view><button class="btn-plain mt" disabled="{{savingId != null}}" bindtap="load">重新加载</button></view>
+  <view wx:elif="{{loading}}" class="card muted">正在加载{{tab === 'plans' ? '用药计划' : '服药记录'}}…</view>
+
+  <block wx:elif="{{tab === 'records' && day}}">
+    <view class="day-summary"><text class="summary-label">{{date === today ? '今日状态' : '当日状态'}}</text><text class="summary-value">已服用 {{day.taken}} 项 · 未记录 {{day.pending}} 项</text><text wx:if="{{day.skipped}}" class="summary-extra"> · 跳过 {{day.skipped}} 项</text></view>
+    <view wx:if="{{!records.length}}" class="empty-state">
+      <view class="empty-title">{{date === today ? '今天还没有用药计划' : '这一天没有用药计划'}}</view>
+      <view class="muted">{{date === today ? '有固定用药方案时，可先添加药名、用量与时间。' : '只展示计划生效日期内的记录。'}}</view>
+      <button class="btn-primary mt" bindtap="addPlan">添加已有用药方案</button>
+    </view>
+    <view wx:if="{{records.length}}" class="med-list">
+      <view wx:for="{{records}}" wx:key="id" class="med-item">
+        <view class="med-time-col"><text class="med-time">{{item.scheduledTime || '—'}}</text><text class="med-status {{item.status === 'TAKEN' ? 'status-taken' : ''}}">{{item.statusLabel}}</text></view>
+        <view class="med-main">
+          <view class="med-name">{{item.drugName}}</view>
+          <view class="med-dose">单次 {{item.dosage || '未填写'}}</view>
+          <view wx:if="{{item.instruction}}" class="med-instruction">{{item.instruction}}</view>
+          <view wx:if="{{item.takenTime}}" class="med-taken">记录于 {{item.takenTime}}</view>
+          <view wx:if="{{day.editable && item.status === 'PENDING'}}" class="row gap med-actions">
+            <button class="btn-plain flex1" disabled="{{savingId != null}}" data-id="{{item.id}}" data-status="SKIPPED" bindtap="changeStatus">跳过</button>
+            <button class="btn-primary flex1" loading="{{savingId === item.id}}" disabled="{{savingId != null}}" data-id="{{item.id}}" data-status="TAKEN" bindtap="changeStatus">记录已服用</button>
+          </view>
+          <button wx:elif="{{day.editable && item.status !== 'CANCELLED'}}" class="text-button undo-button" disabled="{{savingId != null}}" data-id="{{item.id}}" data-status="PENDING" bindtap="changeStatus">撤销本次记录</button>
+        </view>
+      </view>
+    </view>
+    <view class="form-help mt">{{day.editable ? '“未记录”不等于漏服；请按实际情况填写。本功能不会发送微信提醒。' : '历史记录仅供查看，不支持补签或修改。'}}</view>
+  </block>
+
+  <block wx:elif="{{tab === 'plans'}}">
+    <button class="btn-primary add-plan" disabled="{{savingId != null}}" bindtap="addPlan">添加已有用药方案</button>
+    <view class="form-help">每天多个服药时点请分别添加。内容有误或医嘱变更时，停用原计划后重新登记。</view>
+    <view class="section-heading">进行中的计划 · {{plans.length}}</view>
+    <view wx:if="{{!plans.length}}" class="muted">还没有进行中的计划。仅在已有医嘱时登记，系统不会推荐药品和用量。</view>
+    <view wx:if="{{plans.length}}" class="med-list">
+      <view wx:for="{{plans}}" wx:key="id" class="med-item">
+        <view class="med-time-col"><text class="med-time">每天 {{item.scheduledTime}}</text><text class="med-status">{{item.stateLabel}}</text></view>
+        <view class="med-main">
+          <view class="med-name">{{item.drugName}}</view>
+          <view class="med-dose">单次 {{item.dosage}}</view>
+          <view wx:if="{{item.instruction}}" class="med-instruction">{{item.instruction}}</view>
+          <view class="med-taken">{{item.startDate}} 起<text wx:if="{{item.endDate}}">，至 {{item.endDate}}</text></view>
+          <button class="text-button undo-button" disabled="{{savingId != null}}" data-id="{{item.id}}" bindtap="stopPlan">停用此记录计划</button>
+        </view>
+      </view>
+    </view>
+    <button wx:if="{{closedPlans.length}}" class="text-button closed-toggle" bindtap="toggleClosed">{{showClosed ? '收起' : '查看'}}近期结束与停用计划 · {{closedPlans.length}}</button>
+    <view wx:if="{{showClosed && closedPlans.length >= 200}}" class="form-help">此处展示最近 200 个结束或停用的计划，服药记录仍可按日期查看。</view>
+    <view wx:if="{{showClosed}}" class="med-list">
+      <view wx:for="{{closedPlans}}" wx:key="id" class="med-item">
+        <view class="med-time-col"><text class="med-time">每天 {{item.scheduledTime}}</text><text class="med-status">{{item.stateLabel}}</text></view>
+        <view class="med-main"><view class="med-name">{{item.drugName}}</view><view class="med-dose">单次 {{item.dosage}}</view><view class="med-taken">{{item.startDate}} 起<text wx:if="{{item.stoppedDate}}">，{{item.stoppedDate}} 停用</text><text wx:elif="{{item.endDate}}">，至 {{item.endDate}}</text></view></view>
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "low-blood-glucose",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-problems/low-blood-glucose-hypoglycemia",
+    "finalUrl": "https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-problems/low-blood-glucose-hypoglycemia",
+    "status": 200,
+    "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+    "retrievedAt": "2026-10-25T09:08:21.755902+00:00",
+    "htmlSha256": "bacfeb3875b5d4258283d848ec6ead53237c68bc005cef577ad8ab6cfb6de089",
+    "textSha256": "57aca06dac3e740e55b543438de1fc531e054b6f2eb55a64b6f87aaae16420a8",
+    "textCharacters": 14387
+  },
+  {
+    "id": "tests-diagnosis",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/tests-diagnosis",
+    "finalUrl": "https://www.niddk.nih.gov/health-information/diabetes/overview/tests-diagnosis",
+    "status": 200,
+    "title": "Diabetes Tests & Diagnosis - NIDDK",
+    "retrievedAt": "2026-10-25T09:08:22.176585+00:00",
+    "htmlSha256": "a1101d7f77027b5cdacbd67ecdb0d6f3d3575905a2a8e473a8a838204fe6b2a1",
+    "textSha256": "a3bcbbd1f7d20cdaecb23357504c586a77752417c37a60f6c0e6303192167230",
+    "textCharacters": 10082
+  },
+  {
+    "id": "managing-diabetes",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+    "finalUrl": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+    "status": 200,
+    "title": "Managing Diabetes - NIDDK",
+    "retrievedAt": "2026-10-25T09:08:22.928736+00:00",
+    "htmlSha256": "85e906f58714a7e57e4907ffe1cd1a3a5d832961eddff993da27ef690f411837",
+    "textSha256": "0368c7e264e1c773d2a8690e19dd9c77f4ff472fdd0942e1e710ffb5f47f8c11",
+    "textCharacters": 20637
+  },
+  {
+    "id": "continuous-glucose-monitoring",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes/continuous-glucose-monitoring",
+    "finalUrl": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes/continuous-glucose-monitoring",
+    "status": 200,
+    "title": "Continuous Glucose Monitoring - NIDDK",
+    "retrievedAt": "2026-10-25T09:08:23.408369+00:00",
+    "htmlSha256": "c5216c487bf94d72a508dd6d5810b0a5cc6368c822ffa4f8022da5ae62f93d04",
+    "textSha256": "82af9b3f846225dc561ca0ea728e3d4077a04781ac36346a65059ec48b099d8f",
+    "textCharacters": 11464
+  },
+  {
+    "id": "low-blood-sugar-self-care",
+    "url": "https://medlineplus.gov/ency/patientinstructions/000085.htm",
+    "finalUrl": "https://medlineplus.gov/ency/patientinstructions/000085.htm",
+    "status": 200,
+    "title": "Low blood sugar - self-care: MedlinePlus Medical Encyclopedia",
+    "retrievedAt": "2026-10-25T09:08:24.020153+00:00",
+    "htmlSha256": "d2a8ed85502be7ed4a0908a7ee774214492d66d0cc52be043bb5ebe75c0d3f64",
+    "textSha256": "c052221e6f4ad157eeef9e6b9b5ada7f14b2c3f63562e323b4171319d913f467",
+    "textCharacters": 7099
+  },
+  {
+    "id": "hypoglycaemia-first-aid",
+    "url": "https://www.nhs.uk/conditions/low-blood-sugar-hypoglycaemia/",
+    "finalUrl": "https://www.nhs.uk/conditions/low-blood-sugar-hypoglycaemia/",
+    "status": 200,
+    "title": "Low blood sugar (hypoglycaemia)\n - NHS",
+    "retrievedAt": "2026-10-25T09:08:24.793988+00:00",
+    "htmlSha256": "882e38e072fcc8a574534c9641b685ea0f7dbc4baea44a07442325dc0e3c9273",
+    "textSha256": "4f3382cef5309d659a5bb556b0d5efd15fe890cd644b294059cde460860d1ae2",
+    "textCharacters": 5419
+  }
+]

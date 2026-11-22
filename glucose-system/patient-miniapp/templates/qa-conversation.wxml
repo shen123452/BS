@@ -1,0 +1,46 @@
+<view class="qa-page {{isTab ? 'qa-tab' : ''}}">
+  <view class="qa-toolbar"><view class="qa-toolbar-title">{{sessionId ? '当前对话' : '新的对话'}}</view><view class="row"><button class="text-button" disabled="{{generating || pendingRequest}}" bindtap="newConversation">新对话</button><button class="text-button" bindtap="history">历史对话</button></view></view>
+  <scroll-view scroll-y class="chat-scroll" scroll-into-view="{{scrollInto}}" scroll-with-animation>
+    <view wx:if="{{knowledgeHint}}" class="knowledge-hint">{{knowledgeHint}}</view>
+    <view wx:if="{{!messages.length && !loading}}" class="qa-welcome">
+      <view class="qa-welcome-title">想了解什么？</view>
+      <view class="qa-welcome-copy"><view>从一个血糖相关的问题开始。</view><view>回答附资料来源，资料不足时会说明。</view></view>
+      <view class="question-suggestions"><button wx:for="{{suggestions}}" wx:key="*this" class="suggestion-button" data-question="{{item}}" bindtap="chooseQuestion">{{item}}</button></view>
+    </view>
+    <view wx:if="{{loading && !messages.length}}" class="chat-status">正在加载对话…</view>
+    <view wx:for="{{messages}}" wx:key="messageId" class="msg-row {{item.isUser ? 'row-user' : 'row-assistant'}}">
+      <view class="msg-author">{{item.isUser ? '我' : '血糖助手'}}</view>
+      <view class="msg-bubble {{item.isUser ? 'bubble-user' : 'bubble-assistant'}}">
+        <block wx:if="{{item.isProcessing}}">正在查找资料并生成回答…</block>
+        <text wx:elif="{{item.content}}" user-select>{{item.content}}</text>
+        <text wx:elif="{{item.status === 'FAILED'}}">本次回答未完成，请重试。</text>
+      </view>
+      <view wx:if="{{!item.isUser}}" class="message-meta"><text class="mode-label">{{item.modeText}}</text><button wx:if="{{item.hasSources}}" class="text-button source-button" data-id="{{item.messageId}}" bindtap="viewSources">查看引用资料</button></view>
+    </view>
+    <view wx:if="{{errorMsg}}" class="form-error chat-error">{{errorMsg}}</view>
+    <button wx:if="{{errorMsg && sessionId && !pendingRequest}}" class="btn-plain reload-button" bindtap="loadMessages">重新加载对话</button>
+    <button wx:if="{{pendingRequest}}" class="btn-plain reload-button" disabled="{{generating}}" bindtap="retry">{{generating ? '正在生成…' : '重试或查看上次结果'}}</button>
+    <view id="msg-bottom" class="scroll-anchor"></view>
+  </scroll-view>
+  <view class="chat-composer">
+    <view class="chat-input-bar">
+      <input class="chat-input" value="{{input}}" bindinput="onInput" placeholder="输入血糖相关问题" maxlength="500" confirm-type="send" bindconfirm="send" cursor-spacing="20" disabled="{{loading}}" />
+      <button class="btn-primary chat-send" disabled="{{generating || loading || !input}}" bindtap="send">{{generating ? '生成中' : '发送'}}</button>
+    </view>
+    <view class="composer-note">健康知识参考，不替代医生诊断与治疗</view>
+  </view>
+  <view wx:if="{{visibleSources !== null}}" class="source-backdrop" bindtap="closeSources">
+    <view class="source-sheet" catchtap="stopTap">
+      <view class="source-sheet-heading"><view class="card-title">引用资料</view><button class="text-button" bindtap="closeSources">关闭</button></view>
+      <scroll-view scroll-y class="source-scroll">
+        <view wx:if="{{sourceLoading}}" class="chat-status">正在加载资料…</view>
+        <view wx:elif="{{!visibleSources.length}}" class="chat-status">此回答暂无引用资料。</view>
+        <view wx:for="{{visibleSources}}" wx:key="citationId" class="source-item">
+          <view class="source-title">[{{item.citationId}}] {{item.title}}</view><view class="source-origin">{{item.sourceTitle}} · {{item.sourceVersion}}</view>
+          <text class="source-excerpt" user-select>{{item.excerpt || '历史回答未保存资料摘录'}}</text>
+          <button wx:if="{{item.sourceUrl}}" class="text-button source-copy" data-index="{{index}}" bindtap="copySource">复制来源链接</button>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

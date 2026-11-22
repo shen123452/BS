@@ -1,0 +1,17 @@
+<view class="login-page">
+  <view class="login-hero">
+    <image class="login-logo" src="/assets/brand/glucose-drop.svg" mode="aspectFit" aria-hidden="true" />
+    <view class="brand-name">血糖记录</view>
+    <view class="brand-description">记录血糖，了解变化</view>
+  </view>
+  <view class="login-actions">
+    <view wx:if="{{checking}}" class="login-status" aria-live="polite">正在恢复登录…</view>
+    <view wx:if="{{errorMsg}}" class="form-error login-status">{{errorMsg}}</view>
+    <button class="btn-primary login-submit" loading="{{loading}}" disabled="{{loading || checking || !consent}}" bindtap="handleLogin">{{hasSession ? '同意并继续' : '同意并微信登录'}}</button>
+  </view>
+  <view class="login-agreements">
+    <checkbox-group bindchange="onConsent"><label class="consent-row"><checkbox value="accept" checked="{{consent}}" color="#2463EB" /><text>我已阅读并同意</text></label></checkbox-group>
+    <view class="agreement-links"><button class="text-button" bindtap="viewPrivacy">《用户协议》</button><text>与</text><button class="text-button" bindtap="viewPrivacy">《隐私政策》</button></view>
+    <view class="login-footer">仅作健康管理参考，不替代诊断与治疗</view>
+  </view>
+</view>

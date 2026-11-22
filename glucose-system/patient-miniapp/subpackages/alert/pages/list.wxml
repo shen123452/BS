@@ -1,0 +1,33 @@
+<view class="page">
+  <view class="page-heading"><view><view class="page-title">预警记录</view><view class="page-subtitle">异常事件、处理状态与随访记录</view></view></view>
+
+  <view class="alert-control">
+    <view class="alert-note">待处理在前；患者已读与医生处理是两个独立状态</view>
+    <view class="chip {{showHistorical ? 'chip-active' : ''}}" bindtap="toggleHistorical">{{showHistorical ? '历史预警 · 切换' : '当前预警 · 切换'}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="card muted">正在加载预警…</view>
+  <view wx:if="{{errorMsg}}" class="card"><view class="form-error">{{errorMsg}}</view><button class="btn-plain mt" bindtap="load">重试加载</button></view>
+  <view wx:if="{{!loading && !errorMsg && !list.length}}" class="empty-state">
+    <view class="empty-title">{{showHistorical ? '没有历史预警' : '当前没有预警事件'}}</view>
+    <view class="muted">预警由系统按固定规则生成，不代表诊断结论。</view>
+  </view>
+
+  <view wx:for="{{list}}" wx:key="id" class="alert-row {{item.level === 3 ? 'alert-severe' : ''}}">
+    <view class="alert-head">
+      <view class="alert-direction">{{item.directionText}}</view>
+      <view class="alert-time">{{item.startAt}}</view>
+    </view>
+    <view class="alert-message">{{item.message}}</view>
+    <view class="alert-meta">{{item.eventText}} · 共 {{item.sampleCount}} 个采样点</view>
+    <view class="alert-meta">{{item.handledText}}</view>
+    <view class="alert-tags">
+      <view class="tag {{item.dataSource === 'CGM' ? 'tag-info' : 'tag-real'}}">{{item.dataSource}}</view>
+      <view wx:if="{{item.isHistorical === 1}}" class="tag tag-demo">历史数据</view>
+      <view class="tag {{item.dataKind === 'DEMO' ? 'tag-demo' : 'tag-info'}}">{{item.dataKind === 'DEMO' ? '演示数据' : (item.dataKind === 'REAL' ? '真实数据' : '性质未标注')}}</view>
+      <view class="tag {{item.unread ? 'tag-warn' : 'tag-success'}}">{{item.unread ? '患者未读' : '患者已读'}}</view>
+    </view>
+    <button wx:if="{{item.unread}}" class="btn-plain read-button" disabled="{{readingId}}" loading="{{readingId === item.id}}" data-id="{{item.id}}" bindtap="markRead">确认已查看</button>
+    <view wx:if="{{item.level === 3}}" class="severe-note">读数明显异常，请及时寻求专业医疗帮助</view>
+  </view>
+</view>

@@ -1,0 +1,107 @@
+{
+  "results": {
+    "desktop-dashboard": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n工作台\n\n当前患者范围内的近期记录与待处理事项\n\n启用患者\n128\n患者账号正常启用\n近 7 日血糖记录\n3,842\n按测量时间统计\n待处理预警\n7\n等待医生或管理员查看\n数据更新时间\n2026-10-30 15"
+    },
+    "desktop-patients": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n患者管理\n\n患者档案、医生绑定与账号状态\n\n搜索患者\n共 4 名患者\n患者\n\t\n数据性质\n\t\n绑定医生\n\t\n状态\n\t\n注册时间\n\t\n操作\n演示患者甲\ndemo_201\n\t\n演示数据\n\t\n演示医生\n\t\n启用\n\t\n2"
+    },
+    "desktop-glucose": {
+      "width": 1440,
+      "scrollWidth": 1425,
+      "scrollHeight": 1562,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n血糖与分析\n\n按来源查看记录、趋势与完整日统计\n\n演示患者甲(demo_201)\nCGM\nSMBG\n-\n导出 CSV\n导出 Excel\n按已结束的完整日统计\n达到展示门槛部分测量类型未配置目标\n有效记录数\n312"
+    },
+    "desktop-alerts": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n预警中心\n\n异常事件区间、处理结果与随访备注\n\n患者\n方向\n级别\n待处理\n历史\n患者已读 ≠ 医生已处理;升级会重新置为待处理\n方向/级别\n\t\n患者\n\t\n来源\n\t\n发生区间\n\t\n极值 mmol/L\n\t\n样本数\n\t"
+    },
+    "desktop-qa": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n问答记录\n\n问答内容、引用依据与回答模式\n\n患者\n管理员查看留有审计\n患者\n\t\n会话标题\n\t\n创建时间\n\t\n最近更新\n\t\n操作\n演示患者甲\n\t\n餐后血糖偏高怎么办\n\t\n2026-10-29 19:22:00\n\t\n"
+    },
+    "desktop-kb": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n知识库\n\n问答资料、来源版本与检索索引\n\n搜索\n新增文档\n知识入库要求:来源字段必填;内容经人工审核后启用并重建索引。启用文档立即参与问答检索,停用立即退出。\n标题\n\t\n分类\n\t\n来源\n\t\n版本\n\t\n状态\n\t\n索"
+    },
+    "desktop-doctors": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n医生账号\n\n医生账号与使用状态\n\n固定三角色,不提供可视化权限配置(P2)\n新建医生账号\n用户名\n\t\n姓名\n\t\n手机号\n\t\n状态\n\t\n创建时间\n\t\n操作\ndemo_doctor\n\t\n演示医生\n\t\n13800000"
+    },
+    "desktop-login": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "scrollHeight": 900,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n管理员 · 全量范围\n演示管理员\n退出\n工作台\n\n当前患者范围内的近期记录与待处理事项\n\n启用患者\n128\n患者账号正常启用\n近 7 日血糖记录\n3,842\n按测量时间统计\n待处理预警\n7\n等待医生或管理员查看\n数据更新时间\n2026-10-30 15"
+    },
+    "mobile-dashboard": {
+      "width": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 1410,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n演示管理员\n退出\n工作台\n\n当前患者范围内的近期记录与待处理事项\n\n启用患者\n128\n患者账号正常启用\n近 7 日血糖记录\n3,842\n按测量时间统计\n待处理预警\n7\n等待医生或管理员查看\n数据更新时间\n2026-10-30 15:20\n统计口径随页面"
+    },
+    "mobile-patients": {
+      "width": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 844,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n演示管理员\n退出\n患者管理\n\n患者档案、医生绑定与账号状态\n\n搜索患者\n共 4 名患者\n患者\n\t\n数据性质\n\t\n绑定医生\n\t\n状态\n\t\n注册时间\n\t\n操作\n演示患者甲\ndemo_201\n\t\n演示数据\n\t\n演示医生\n\t\n启用\n\t\n2026-10-20 0"
+    },
+    "mobile-glucose": {
+      "width": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 1854,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n演示管理员\n退出\n血糖与分析\n\n按来源查看记录、趋势与完整日统计\n\n演示患者甲(demo_201)\nCGM\nSMBG\n-\n导出 CSV\n导出 Excel\n按已结束的完整日统计\n达到展示门槛部分测量类型未配置目标\n有效记录数\n312\n数据充分性 86%\n"
+    },
+    "mobile-login": {
+      "width": 390,
+      "scrollWidth": 390,
+      "scrollHeight": 1410,
+      "text": "血糖监测与智能问答系统\n健康管理工作台\n工作台\n患者管理\n血糖与分析\n预警中心\n问答记录\n知识库\n医生账号\n演示管理员\n退出\n工作台\n\n当前患者范围内的近期记录与待处理事项\n\n启用患者\n128\n患者账号正常启用\n近 7 日血糖记录\n3,842\n按测量时间统计\n待处理预警\n7\n等待医生或管理员查看\n数据更新时间\n2026-10-30 15:20\n统计口径随页面"
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "requestPaths": [
+    "/api/admin/dashboard/overview",
+    "/api/admin/patients",
+    "/api/admin/users/doctors",
+    "/api/admin/patients",
+    "/api/admin/analysis/patient/201",
+    "/api/admin/analysis/patient/201/daily",
+    "/api/admin/analysis/patient/201/trend",
+    "/api/admin/glucose",
+    "/api/admin/alerts",
+    "/api/admin/patients",
+    "/api/admin/qa/sessions",
+    "/api/admin/patients",
+    "/api/admin/kb/documents",
+    "/api/admin/users/doctors",
+    "/api/common/captcha",
+    "/api/admin/dashboard/overview",
+    "/api/admin/dashboard/overview",
+    "/api/admin/patients",
+    "/api/admin/users/doctors",
+    "/api/admin/patients",
+    "/api/admin/analysis/patient/201",
+    "/api/admin/analysis/patient/201/daily",
+    "/api/admin/analysis/patient/201/trend",
+    "/api/admin/glucose",
+    "/api/common/captcha",
+    "/api/admin/dashboard/overview"
+  ],
+  "fixtureNote": "仅隔离合成演示数据，不代表数据库或真实患者"
+}

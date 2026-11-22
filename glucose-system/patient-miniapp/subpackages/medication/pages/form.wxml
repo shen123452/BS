@@ -1,0 +1,14 @@
+<view class="page">
+  <view class="page-heading"><view><view class="page-title">添加用药方案</view><view class="page-subtitle">照已有医嘱填写，每个计划每天记录一次</view></view></view>
+  <view class="med-form">
+    <view class="form-item"><label class="form-label" for="drug-name">药品名称</label><input id="drug-name" class="form-input" value="{{form.drugName}}" maxlength="100" placeholder="填写处方或药盒上的名称" disabled="{{saving}}" data-field="drugName" bindinput="input" /></view>
+    <view class="form-item"><label class="form-label" for="drug-dose">单次用量</label><input id="drug-dose" class="form-input" value="{{form.dosage}}" maxlength="50" placeholder="按原医嘱填写，包含单位" disabled="{{saving}}" data-field="dosage" bindinput="input" /></view>
+    <view class="form-item"><view class="form-label">每日记录时间</view><picker mode="time" value="{{form.scheduledTime}}" disabled="{{saving}}" data-field="scheduledTime" bindchange="input"><view class="form-input">{{form.scheduledTime || '选择时间'}}</view></picker><view class="form-help">一天服用多次时，请按时点分别添加。</view></view>
+    <view class="form-item"><view class="form-label">开始日期</view><picker mode="date" value="{{form.startDate}}" start="{{today}}" disabled="{{saving}}" data-field="startDate" bindchange="input"><view class="form-input">{{form.startDate}}</view></picker></view>
+    <view class="form-item"><view class="form-label">结束日期（选填）</view><picker mode="date" value="{{form.endDate || form.startDate}}" start="{{form.startDate}}" disabled="{{saving}}" data-field="endDate" bindchange="input"><view class="form-input">{{form.endDate || '不设结束日期'}}</view></picker><button wx:if="{{form.endDate}}" class="text-button" disabled="{{saving}}" bindtap="clearEnd">清除结束日期</button></view>
+    <view class="form-item"><label class="form-label" for="drug-note">医嘱备注（选填）</label><input id="drug-note" class="form-input" value="{{form.instruction}}" maxlength="200" placeholder="记录原有医嘱中的注意事项" disabled="{{saving}}" data-field="instruction" bindinput="input" /></view>
+  </view>
+  <view class="med-boundary">这里只登记已有方案，不生成处方或调整用量，也不会发送微信提醒。用药有疑问时请咨询医生或药师。</view>
+  <view wx:if="{{errorMsg}}" class="form-error form-item">{{errorMsg}}</view>
+  <button class="btn-primary" loading="{{saving}}" disabled="{{saving || !ready}}" bindtap="save">保存用药计划</button>
+</view>

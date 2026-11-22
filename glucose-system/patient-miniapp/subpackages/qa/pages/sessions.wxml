@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="page-heading"><view><view class="page-title">历史对话</view><view class="page-subtitle">查看之前的问题、回答和资料出处</view></view></view>
+  <button class="btn-primary" bindtap="createAndEnter">开始新的对话</button>
+  <view wx:if="{{loading}}" class="muted mt">正在加载历史对话…</view>
+  <view wx:if="{{errorMsg}}" class="card mt"><view class="form-error">{{errorMsg}}</view><button class="btn-plain mt" bindtap="load">重新加载</button></view>
+
+  <view wx:if="{{!loading && !errorMsg && !sessions.length}}" class="empty-state">
+    <view class="empty-title">还没有对话</view>
+    <view class="muted">发出第一个问题后，对话会自动保存在这里。</view>
+  </view>
+
+  <view wx:if="{{sessions.length}}" class="session-list">
+    <view wx:for="{{sessions}}" wx:key="sessionId" class="session-row" data-id="{{item.sessionId}}" bindtap="enter" hover-class="tap-active">
+      <view class="session-main">
+        <view class="session-title">{{item.title}}</view>
+        <view class="session-meta">更新于 {{item.updatedAt}}</view>
+      </view>
+      <button class="text-button session-delete" disabled="{{deletingId}}" loading="{{deletingId === item.sessionId}}" data-id="{{item.sessionId}}" catchtap="removeSession">删除</button>
+    </view>
+  </view>
+</view>

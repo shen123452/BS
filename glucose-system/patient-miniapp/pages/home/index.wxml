@@ -1,0 +1,119 @@
+<view class="home-page">
+  <view class="home-hero">
+    <view class="home-topbar">
+      <view class="topbar-left">
+        <text class="today-date">{{todayLabel}}</text>
+        <text class="mode-badge {{dataMode === 'DEMO' ? 'mode-demo' : 'mode-real'}}">{{dataMode === 'DEMO' ? '演示数据' : '真实数据'}}</text>
+      </view>
+      <view class="alert-pill {{overview && overview.unreadAlerts > 0 ? 'alert-pill-active' : ''}}" hover-class="pill-hover" bindtap="goAlerts" role="button" aria-label="查看异常提醒">
+        <image class="alert-icon" src="/assets/icons/menu-alert.svg" mode="aspectFit" aria-hidden="true" />
+        <text class="alert-label">提醒</text>
+        <text class="alert-count mono-num">{{overview.unreadAlerts || 0}}</text>
+      </view>
+    </view>
+
+    <view class="reading-card">
+      <view class="source-segments">
+        <view wx:for="{{sources}}" wx:key="key" class="source-segment {{selectedSource === item.key ? 'selected' : ''}}" data-source="{{item.key}}" bindtap="pickSource" role="button" aria-label="切换到{{item.label}}">{{item.label}}</view>
+      </view>
+
+      <block wx:for="{{sources}}" wx:key="key">
+        <view wx:if="{{selectedSource === item.key}}" class="current-reading" data-source="{{item.key}}" bindtap="goList" role="button" aria-label="查看{{item.label}}记录">
+          <view class="reading-head">
+            <text class="reading-caption">最近测量</text>
+            <view class="reading-link">
+              <text>记录列表</text>
+              <image class="mini-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+            </view>
+          </view>
+
+          <view class="reading-number">
+            <text wx:if="{{item.latest}}" class="number mono-num">{{item.latest.glucoseMmol}}</text>
+            <text wx:else class="number-empty mono-num">--.-</text>
+            <text class="unit">mmol/L</text>
+          </view>
+
+          <view class="reading-meta">
+            <text class="reading-time">{{item.latest ? item.latest.measuredAt : item.empty}}</text>
+            <text wx:if="{{item.latest && item.latest.measureTypeLabel}}" class="measure-pill">{{item.latest.measureTypeLabel}}</text>
+          </view>
+
+          <view class="reading-footer">
+            <text class="today-count-pill">今日{{item.label}} <text class="mono-num">{{item.todayCount || 0}}</text> 条</text>
+          </view>
+          <view wx:if="{{item.sparseTip}}" class="reading-tip">手工测量次数有限，不能代表全天变化。</view>
+        </view>
+      </block>
+    </view>
+
+    <view class="quick-actions">
+      <button class="btn-primary action-record" bindtap="goRecord">
+        <image class="action-icon" src="/assets/icons/home-plus.svg" mode="aspectFit" aria-hidden="true" />
+        <text>记录血糖</text>
+      </button>
+      <button class="btn-plain action-import" bindtap="goImport">
+        <image class="action-icon" src="/assets/icons/home-upload.svg" mode="aspectFit" aria-hidden="true" />
+        <text>导入数据</text>
+      </button>
+    </view>
+  </view>
+
+  <view class="home-body">
+    <view wx:if="{{errorMsg}}" class="section-card state-card">
+      <view class="form-error">{{errorMsg}}</view>
+      <button class="btn-plain mt" bindtap="load">重新加载</button>
+    </view>
+    <view wx:elif="{{loading}}" class="section-card state-card">
+      <view class="muted">正在读取今天的记录…</view>
+    </view>
+
+    <block wx:elif="{{overview}}">
+      <view class="section-card" hover-class="card-hover" bindtap="goMedication" role="button">
+        <view class="section-head">
+          <view class="section-title-group">
+            <image class="section-icon" src="/assets/icons/menu-medication.svg" mode="aspectFit" aria-hidden="true" />
+            <text class="section-title">今日用药</text>
+          </view>
+          <view class="section-action">
+            <text>{{medication && medication.records.length ? '去记录' : '管理计划'}}</text>
+            <image class="mini-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+          </view>
+        </view>
+
+        <view wx:if="{{medicationLoading}}" class="muted">正在加载用药记录…</view>
+        <view wx:elif="{{medicationError}}" class="form-error">{{medicationError}}</view>
+        <view wx:elif="{{medication && medication.records.length}}" class="med-stats">
+          <view class="med-stat med-taken">已服用 <text class="mono-num">{{medication.taken}}</text></view>
+          <view class="med-stat med-pending">待记录 <text class="mono-num">{{medication.pending}}</text></view>
+          <view wx:if="{{medication.skipped}}" class="med-stat med-skipped">跳过 <text class="mono-num">{{medication.skipped}}</text></view>
+        </view>
+        <view wx:else class="section-desc">有固定用药方案时，可添加每日服药计划与打卡。</view>
+        <view class="section-footnote">登记已有方案 · 未记录不等于漏服</view>
+      </view>
+
+      <view class="section-card" hover-class="card-hover" bindtap="goAnalysis" role="button">
+        <view class="section-head">
+          <view class="section-title-group">
+            <image class="section-icon" src="/assets/icons/home-chart.svg" mode="aspectFit" aria-hidden="true" />
+            <text class="section-title">今日记录概览</text>
+          </view>
+          <view class="section-action">
+            <text>查看分析</text>
+            <image class="mini-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
+          </view>
+        </view>
+
+        <view class="overview-grid">
+          <view wx:for="{{sources}}" wx:key="key" class="overview-tile">
+            <view class="tile-label">{{item.label}}</view>
+            <view class="tile-value">
+              <text class="tile-num mono-num">{{item.todayCount || 0}}</text>
+              <text class="tile-unit">条</text>
+            </view>
+          </view>
+        </view>
+        <view class="section-footnote">今日合计 {{todayCount || 0}} 条 · 支持 7 / 14 / 30 天趋势分析</view>
+      </view>
+    </block>
+  </view>
+</view>

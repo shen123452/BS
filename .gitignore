@@ -1,0 +1,31 @@
+# Local IDE state
+.idea/
+**/.idea/
+
+# Installed dependencies and rebuildable outputs
+**/node_modules/
+**/target/
+**/dist/
+**/__pycache__/
+*.py[cod]
+
+# Local runtime data, backups and service logs
+glucose-system/backend/.runtime/
+
+# Generated local acceptance reports and snapshots
+glucose-system/tests/.artifacts/
+
+# Disposable UI acceptance environments
+.impeccable/review/compile/
+.impeccable/review/compile2/
+.impeccable/review/miniapp-tourist/
+.impeccable/review/wxml-test.js
+
+# Machine-specific WeChat developer tool settings
+glucose-system/patient-miniapp/project.private.config.json
+
+# Local environment credentials
+.env
+.env.*
+!.env.example
+!.env.*.example

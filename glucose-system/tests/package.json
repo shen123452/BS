@@ -1,0 +1,11 @@
+{
+  "name": "glucose-local-acceptance",
+  "private": true,
+  "scripts": {
+    "test": "node --test patient-miniapp.test.cjs",
+    "review:miniapp": "node miniapp-native-review.cjs"
+  },
+  "devDependencies": {
+    "miniprogram-automator": "^0.13.0"
+  }
+}

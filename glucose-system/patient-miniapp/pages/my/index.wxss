@@ -1,0 +1,246 @@
+page {
+  background-color: #F4F7FB;
+}
+
+.profile-page {
+  min-height: 100vh;
+  background-color: #F4F7FB;
+  padding-bottom: calc(64rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 顶部渐变账号区，与导航栏自然融合 */
+.profile-hero {
+  background: linear-gradient(180deg, #DCEEFF 0%, #EEF6FF 60%, #F4F7FB 100%);
+  padding: 24rpx 32rpx 46rpx;
+}
+
+.account-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.account-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.account-avatar {
+  width: 116rpx;
+  height: 116rpx;
+  border-radius: 26rpx;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  border: 4rpx solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8rpx 22rpx rgba(37, 99, 235, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatar-initial {
+  font-size: 46rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.avatar-icon {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.account-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 26rpx;
+}
+
+.account-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.account-name {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #0F172A;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-tag {
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 2rpx 12rpx;
+  border-radius: 9999rpx;
+  flex-shrink: 0;
+}
+
+.hero-tag-demo {
+  color: #6D28D9;
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.account-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.account-id {
+  font-size: 25rpx;
+  color: #334155;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.phone-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 9999rpx;
+  background: rgba(37, 99, 235, 0.1);
+  color: #1D4ED8;
+  font-size: 22rpx;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.phone-pill-bound {
+  background: rgba(5, 150, 105, 0.1);
+  color: #047857;
+}
+
+.phone-pill-icon {
+  width: 22rpx;
+  height: 22rpx;
+  flex-shrink: 0;
+}
+
+.account-settings {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+.settings-icon {
+  width: 46rpx;
+  height: 46rpx;
+}
+
+/* 主体功能列表区 */
+.profile-body {
+  padding: 0 28rpx;
+}
+
+.state-card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+}
+
+.menu-card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  min-height: 112rpx;
+  padding: 0 28rpx 0 32rpx;
+  box-sizing: border-box;
+  background: #FFFFFF;
+}
+
+.menu-item-hover {
+  background: #F8FAFC;
+}
+
+.menu-item-disabled {
+  opacity: 0.45;
+}
+
+.menu-icon {
+  width: 42rpx;
+  height: 42rpx;
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+
+.menu-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1E293B;
+}
+
+.menu-label-danger {
+  color: #DC2626;
+}
+
+.menu-value {
+  font-size: 25rpx;
+  color: #94A3B8;
+  margin-right: 10rpx;
+  max-width: 260rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-chevron {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
+}
+
+.menu-divider {
+  height: 1rpx;
+  background: #F1F5F9;
+  margin-left: 98rpx;
+}
+
+/* 底部版本号与免责提示 */
+.profile-footer {
+  text-align: center;
+  padding: 24rpx 0 12rpx;
+}
+
+.version-text {
+  font-size: 25rpx;
+  color: #94A3B8;
+  font-weight: 500;
+}
+
+.disclaimer-text {
+  font-size: 22rpx;
+  color: #CBD5E1;
+  margin-top: 8rpx;
+}

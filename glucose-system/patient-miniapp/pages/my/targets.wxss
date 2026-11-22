@@ -1,0 +1,144 @@
+page {
+  background-color: #F4F7FB;
+}
+
+.sub-page {
+  min-height: 100vh;
+  padding: 24rpx 28rpx calc(64rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.state-card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 36rpx 30rpx;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+}
+
+.tip-banner {
+  background: #EFF6FF;
+  border: 1rpx solid #BFDBFE;
+  color: #1E40AF;
+  font-size: 24rpx;
+  line-height: 1.65;
+  padding: 20rpx 24rpx;
+  border-radius: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 28rpx 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 24rpx rgba(15, 23, 42, 0.045);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.enabled-badge {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: #1D4ED8;
+  background: #EFF6FF;
+  padding: 4rpx 16rpx;
+  border-radius: 9999rpx;
+}
+
+.section-desc {
+  margin-bottom: 16rpx;
+}
+
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.range-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.range-label {
+  font-size: 23rpx;
+  color: #64748B;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.range-sep {
+  font-size: 26rpx;
+  color: #64748B;
+  flex-shrink: 0;
+  padding-top: 22rpx;
+}
+
+.rule-body .range-sep {
+  padding-top: 0;
+}
+
+.rule-list {
+  border-top: 1rpx solid #F1F5F9;
+}
+
+.rule-item {
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #F1F5F9;
+}
+
+.rule-item:last-child {
+  border-bottom: none;
+  padding-bottom: 4rpx;
+}
+
+.rule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.rule-name {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.rule-body {
+  margin-top: 16rpx;
+}
+
+.basis-input {
+  margin-top: 14rpx;
+}
+
+.rule-off-note {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #94A3B8;
+}
+
+.form-error-box {
+  margin-bottom: 24rpx;
+  padding: 18rpx 22rpx;
+  background: #FEF2F2;
+  border: 1rpx solid #FECACA;
+  border-radius: 16rpx;
+}
+
+.bottom-actions {
+  margin-top: 12rpx;
+}

@@ -1,0 +1,68 @@
+<view class="page">
+  <view class="page-heading"><view><view class="page-title">导入连续监测</view><view class="page-subtitle">标准 5 分钟网格 · 先预检，后确认</view></view></view>
+
+  <block wx:if="{{step === 1}}">
+    <view class="step-block">
+      <view class="step-heading"><text class="step-index">01</text><text class="step-title">数据要求</text></view>
+      <view class="spec-row"><text class="spec-key">单位 / 时区</text><text class="spec-value">mmol/L · Asia/Shanghai</text></view>
+      <view class="spec-row"><text class="spec-key">采样间隔</text><text class="spec-value">固定 5 分钟网格（分钟为 5 的倍数）</text></view>
+      <view class="spec-row"><text class="spec-key">单批限制</text><text class="spec-value">最多 10000 行 / 5 MB，允许缺测与乱序</text></view>
+      <view class="spec-row"><text class="spec-key">表头</text><text class="spec-value mono-num">measured_at, glucose_mmol</text></view>
+      <view class="spec-note">其他格式（mg/dL 等）请先按说明转换。</view>
+      <button class="btn-plain mt" bindtap="copyTemplate">复制 CSV 模板内容</button>
+    </view>
+
+    <view class="step-block">
+      <view class="step-heading"><text class="step-index">02</text><text class="step-title">确认元数据</text></view>
+      <checkbox-group bindchange="toggleMeta"><label class="confirm-row">
+        <checkbox value="metadata" checked="{{metaConfirmed}}" disabled="{{uploading}}" color="#2463EB" />
+        <view class="confirm-copy">我确认数据单位为 mmol/L、时区为东八区、间隔为 5 分钟</view>
+      </label></checkbox-group>
+    </view>
+
+    <button class="btn-primary" loading="{{uploading}}" disabled="{{uploading || busyId}}" bindtap="chooseAndUpload">{{uploading ? '预检中…' : '选择文件并上传预检'}}</button>
+
+  </block>
+
+  <block wx:if="{{step === 3 && preview}}">
+    <view class="step-block">
+      <view class="step-heading"><text class="step-index">03</text><text class="step-title">预检结果</text><text class="tag {{preview.statusClass}}">{{preview.statusText}}</text></view>
+      <view class="preview-metrics">
+        <view class="preview-metric"><text class="preview-label">总行数</text><text class="preview-value mono-num">{{preview.totalRows}}</text></view>
+        <view class="preview-metric"><text class="preview-label">有效</text><text class="preview-value mono-num">{{preview.validRows}}</text></view>
+        <view class="preview-metric"><text class="preview-label">重复</text><text class="preview-value mono-num">{{preview.duplicateRows}}</text></view>
+        <view wx:if="{{preview.conflictRows > 0}}" class="preview-metric danger"><text class="preview-label">冲突</text><text class="preview-value mono-num">{{preview.conflictRows}}</text></view>
+        <view wx:if="{{preview.errorRows > 0}}" class="preview-metric danger"><text class="preview-label">错误</text><text class="preview-value mono-num">{{preview.errorRows}}</text></view>
+      </view>
+
+      <block wx:if="{{preview.errors.length > 0}}">
+        <view class="error-heading">前 {{preview.errors.length}} 条问题</view>
+        <view wx:for="{{preview.errors}}" wx:key="line" class="form-error">第 {{item.line}} 行 {{item.field}}：{{item.reason}}</view>
+      </block>
+
+      <view wx:if="{{preview.errorRows > 0 || preview.conflictRows > 0}}" class="blocked-note">存在错误或冲突，请修正文件后重新预检；确认已禁用。</view>
+
+      <view class="row gap preview-actions">
+        <button class="btn-plain flex1" disabled="{{busyId}}" bindtap="backToUpload">重新预检</button>
+        <button class="btn-primary flex1" loading="{{busyId}}" disabled="{{busyId || preview.errorRows > 0 || preview.conflictRows > 0 || preview.status !== 'READY'}}" data-batch="{{preview}}" bindtap="confirmBatch">确认导入</button>
+      </view>
+    </view>
+  </block>
+
+  <view wx:if="{{errorMsg}}" class="form-error mt">{{errorMsg}}</view>
+  <view wx:if="{{feedback}}" class="success-feedback mt">{{feedback}}</view>
+  <view class="step-block history-block">
+    <view class="step-heading"><text class="step-title">历史批次</text></view>
+    <view wx:if="{{batchesLoading}}" class="muted">正在加载批次…</view>
+    <view wx:elif="{{batchesError}}"><view class="form-error">{{batchesError}}</view><button class="btn-plain mt" bindtap="loadBatches">重新加载批次</button></view>
+    <view wx:elif="{{!batches.length}}" class="muted">还没有导入批次</view>
+    <view wx:for="{{batches}}" wx:key="id" class="batch-row">
+      <view class="batch-main">
+        <view class="batch-title">批次 {{item.id}}</view>
+        <view class="batch-meta">{{item.insertedRows}} 条新增 · {{item.createdAt}}</view>
+      </view>
+      <view class="tag {{item.statusClass}}">{{item.statusText}}</view>
+      <button wx:if="{{item.revocable}}" class="text-button batch-revoke" disabled="{{busyId}}" loading="{{busyId === item.id}}" data-id="{{item.id}}" bindtap="revokeBatch">撤销本批数据</button>
+    </view>
+  </view>
+</view>

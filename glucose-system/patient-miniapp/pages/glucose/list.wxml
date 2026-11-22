@@ -1,0 +1,83 @@
+<view class="records-page">
+  <view class="records-header">
+    <view class="record-toolbar">
+      <button class="btn-primary flex1 action-btn" bindtap="goRecord">
+        <image class="btn-icon" src="/assets/icons/home-plus.svg" mode="aspectFit" aria-hidden="true" />
+        <text>记录血糖</text>
+      </button>
+      <button class="btn-plain flex1 action-btn secondary-btn" bindtap="goImport">
+        <image class="btn-icon" src="/assets/icons/home-upload.svg" mode="aspectFit" aria-hidden="true" />
+        <text>导入数据</text>
+      </button>
+    </view>
+
+    <view class="source-tabs">
+      <view class="source-tab {{!dataSource ? 'source-tab-active' : ''}}" data-source="" bindtap="setSource" role="button">全部</view>
+      <view class="source-tab {{dataSource === 'SMBG' ? 'source-tab-active' : ''}}" data-source="SMBG" bindtap="setSource" role="button">指尖血糖</view>
+      <view class="source-tab {{dataSource === 'CGM' ? 'source-tab-active' : ''}}" data-source="CGM" bindtap="setSource" role="button">连续监测</view>
+    </view>
+
+    <view class="filter-meta">
+      <picker mode="date" value="{{date}}" bindchange="onDateChange">
+        <view class="date-pill {{date ? 'date-pill-active' : ''}}">
+          <image class="date-icon" src="/assets/icons/calendar-mini.svg" mode="aspectFit" aria-hidden="true" />
+          <text>{{date || '全部日期'}}</text>
+        </view>
+      </picker>
+      <view wx:if="{{date}}" class="clear-pill" bindtap="clearDate" role="button">清除</view>
+      <view class="flex1"></view>
+      <view class="record-total">共 <text class="mono-num total-num">{{total}}</text> 条</view>
+    </view>
+  </view>
+
+  <view class="records-body">
+    <view wx:if="{{errorMsg}}" class="state-card">
+      <view class="form-error">{{errorMsg}}</view>
+      <button class="btn-plain mt" bindtap="load">重新加载</button>
+    </view>
+    <view wx:if="{{loading}}" class="state-card muted">正在加载记录…</view>
+
+    <view wx:if="{{!loading && !errorMsg && records.length === 0}}" class="empty-state">
+      <view class="empty-badge">
+        <image class="empty-icon" src="/assets/icons/record-empty.svg" mode="aspectFit" aria-hidden="true" />
+      </view>
+      <view class="empty-title">{{emptyTitle}}</view>
+      <view class="empty-tip">{{emptyTip}}</view>
+      <button wx:if="{{date || dataSource}}" class="btn-plain empty-cta" bindtap="clearFilters">清除筛选条件</button>
+      <button wx:else class="btn-plain empty-cta" bindtap="goRecord">去记录第一条血糖</button>
+    </view>
+
+    <view wx:if="{{records.length}}" class="record-list">
+      <view wx:for="{{records}}" wx:key="id" class="record-row">
+        <view class="record-accent {{item.riskText ? 'accent-danger' : (item.dataSource === 'CGM' ? 'accent-info' : 'accent-primary')}}" />
+        <view class="record-content">
+          <view class="record-top">
+            <view class="record-body">
+              <view class="record-time mono-num">{{item.measuredAt}}<text wx:if="{{item.measureTypeLabel}}" class="record-type"> · {{item.measureTypeLabel}}</text></view>
+              <view class="record-tags">
+                <text class="mini-tag {{item.dataSource === 'CGM' ? 'mini-tag-cgm' : 'mini-tag-smbg'}}">{{item.dataSource === 'CGM' ? '连续监测' : '指尖血糖'}}</text>
+                <text wx:if="{{item.riskText}}" class="mini-tag mini-tag-danger">{{item.riskText}}</text>
+                <text wx:if="{{item.batchId}}" class="mini-tag mini-tag-batch">批次 {{item.batchId}}</text>
+              </view>
+              <view wx:if="{{item.note}}" class="record-note">{{item.note}}</view>
+              <view wx:if="{{!item.isSmbg}}" class="record-note">{{item.readOnlyText}}</view>
+            </view>
+            <view class="record-value">
+              <text class="value-num mono-num {{item.riskText ? 'value-danger' : ''}}">{{item.glucoseMmol}}</text>
+              <text class="value-unit">mmol/L</text>
+            </view>
+          </view>
+
+          <view wx:if="{{item.isSmbg}}" class="record-actions">
+            <view class="row-action" data-id="{{item.id}}" bindtap="editRecord" role="button">修改</view>
+            <view class="row-action-sep" />
+            <view class="row-action row-action-danger" data-id="{{item.id}}" bindtap="deleteRecord" role="button">删除</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <button wx:if="{{hasMore && !loading}}" class="btn-plain mt load-more" disabled="{{loadingMore}}" bindtap="loadMore">{{loadingMore ? '正在加载…' : '加载更多记录'}}</button>
+    <view wx:if="{{!hasMore && records.length && !loading}}" class="page-footnote">已显示全部 {{total}} 条记录</view>
+  </view>
+</view>

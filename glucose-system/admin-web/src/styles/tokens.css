@@ -1,0 +1,78 @@
+/* 设计令牌：现代高端医疗 SaaS / 健康科技风 (Modern Health-Tech SaaS) */
+:root {
+  --color-ink: #0F172A;
+  --color-ink-muted: #475569;
+  --color-ink-faint: #64748B;
+  --color-surface: #FFFFFF;
+  --color-canvas: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  
+  --color-primary: #2563EB;
+  --color-primary-strong: #1D4ED8;
+  --color-accent: #EF4444;
+  --color-info: #0284C7;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-demo: #7C3AED;
+  
+  --color-surface-subtle: #F1F5F9;
+  --color-danger-subtle: #FEF2F2;
+  --color-warning-subtle: #FFFBEB;
+  --color-success-subtle: #ECFDF5;
+  --color-info-subtle: #F0F9FF;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --shadow-1: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-2: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 12px 28px -4px rgba(15, 23, 42, 0.09), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+  --shadow-panel: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  --shadow-primary: 0 4px 14px 0 rgba(37, 99, 235, 0.25);
+  
+  --grad-primary: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  --grad-primary-hover: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
+  --grad-brand: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-data: var(--font-ui);
+
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-dark-2: var(--color-primary-strong);
+  --el-color-primary-light-3: #60A5FA;
+  --el-color-primary-light-5: #93C5FD;
+  --el-color-primary-light-7: #BFDBFE;
+  --el-color-primary-light-8: #DBEAFE;
+  --el-color-primary-light-9: #EFF6FF;
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  --el-color-error: var(--color-danger);
+  --el-text-color-primary: var(--color-ink);
+  --el-text-color-regular: var(--color-ink);
+  --el-text-color-secondary: var(--color-ink-muted);
+  --el-text-color-placeholder: var(--color-ink-faint);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border);
+  --el-border-color-lighter: #F1F5F9;
+  --el-fill-color-blank: var(--color-surface);
+  --el-bg-color: var(--color-surface);
+  --el-bg-color-page: var(--color-canvas);
+  --el-border-radius-base: var(--radius-md);
+  --el-border-radius-small: var(--radius-sm);
+  --el-font-family: var(--font-ui);
+}

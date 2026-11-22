@@ -1,0 +1,63 @@
+<view class="sub-page">
+  <view wx:if="{{errorMsg}}" class="state-card">
+    <view class="form-error">{{errorMsg}}</view>
+    <button class="btn-plain mt" bindtap="load">重新加载</button>
+  </view>
+  <view wx:elif="{{loading && !targets}}" class="state-card muted">正在加载目标范围…</view>
+
+  <block wx:elif="{{targets}}">
+    <view class="tip-banner">
+      默认 3.9 – 10.0 mmol/L 为本系统示例目标，并非所有人群的统一正常值。请与专业医务人员确认适合自己的控制范围。
+    </view>
+
+    <view class="section-card">
+      <view class="section-header">
+        <view class="section-title">连续监测目标（CGM）</view>
+        <text class="tag tag-info">mmol/L</text>
+      </view>
+      <view class="range-row">
+        <view class="range-col">
+          <view class="range-label">目标下限</view>
+          <input class="form-input mono-num" type="digit" value="{{targetForm.low}}" placeholder="如 3.9" data-field="low" bindinput="onCgmInput" />
+        </view>
+        <text class="range-sep">至</text>
+        <view class="range-col">
+          <view class="range-label">目标上限</view>
+          <input class="form-input mono-num" type="digit" value="{{targetForm.high}}" placeholder="如 10.0" data-field="high" bindinput="onCgmInput" />
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <view class="section-header">
+        <view class="section-title">指尖血糖分类型目标（SMBG）</view>
+        <text class="enabled-badge">已启用 {{enabledCount}} / 6</text>
+      </view>
+      <view class="muted section-desc">未启用的测量类型不计入达标率；关闭已启用项并在底部保存将移除该目标。</view>
+
+      <view class="rule-list">
+        <view class="rule-item" wx:for="{{targetRows}}" wx:key="measureType">
+          <view class="rule-header">
+            <view class="rule-name">{{item.label}}</view>
+            <switch checked="{{item.enabled}}" color="#2563EB" data-index="{{index}}" data-field="enabled" bindchange="onRuleInput" />
+          </view>
+          <view wx:if="{{item.enabled}}" class="rule-body">
+            <view class="range-row">
+              <input class="form-input flex1 mono-num" type="digit" value="{{item.low}}" placeholder="下限" data-index="{{index}}" data-field="low" bindinput="onRuleInput" />
+              <text class="range-sep">至</text>
+              <input class="form-input flex1 mono-num" type="digit" value="{{item.high}}" placeholder="上限" data-index="{{index}}" data-field="high" bindinput="onRuleInput" />
+            </view>
+            <input class="form-input basis-input" value="{{item.basis}}" placeholder="设置依据（选填，最多 200 字）" maxlength="200" data-index="{{index}}" data-field="basis" bindinput="onRuleInput" />
+          </view>
+          <view wx:else class="rule-off-note">未配置该时段目标</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{targetError}}" class="form-error form-error-box">{{targetError}}</view>
+
+    <view class="bottom-actions">
+      <button class="btn-primary" loading="{{saving}}" disabled="{{saving}}" bindtap="saveTargets">保存目标范围</button>
+    </view>
+  </block>
+</view>

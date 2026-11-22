@@ -1,0 +1,2 @@
+.med-form { border-top: 1rpx solid var(--color-border); padding-top: 20rpx; }
+.med-boundary { margin: 8rpx 0 28rpx; padding: 18rpx 20rpx; background: var(--color-surface-subtle); font-size: 24rpx; line-height: 1.7; color: var(--color-ink-muted); }

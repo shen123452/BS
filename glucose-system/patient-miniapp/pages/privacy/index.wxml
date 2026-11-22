@@ -1,0 +1,8 @@
+<view class="page policy-page">
+  <view class="page-heading"><view><view class="page-title">隐私与使用说明</view><view class="page-subtitle">数据如何被使用、保存与删除</view></view></view>
+  <view class="policy-section"><view class="section-heading">数据如何使用</view><view class="policy-copy">你的血糖与档案用于本人的记录和分析；已绑定医生及授权管理员可查看相关数据。个人资料可在「我的」中管理。</view></view>
+  <view class="policy-section"><view class="section-heading">智能问答</view><view class="policy-copy">系统会将问题与必要的血糖数据摘要发送给模型服务，当前使用阿里百炼。自动生成的数据摘要不包含姓名、手机号或微信标识；请勿在问题中主动填写这些身份信息。</view><view class="policy-copy mt">回答会附上可用的资料出处；资料不足时会说明限制。模型可能出错，请结合原文判断。</view></view>
+  <view class="policy-section"><view class="section-heading">使用边界</view><view class="policy-copy">本系统提供健康管理参考，不提供诊断、处方或用药剂量调整。若读数明显异常，请及时寻求专业医疗帮助。</view></view>
+  <view class="policy-section"><view class="section-heading">管理与删除</view><view class="policy-copy">可在「我的」中修改档案、查看确认记录、退出登录或注销账号。注销会使登录凭证失效，并清理本人的档案、血糖、提醒、问答和导入数据，无法恢复。</view></view>
+  <view class="page-footnote">登录时统一确认，使用功能时无需重复确认。</view>
+</view>

@@ -1,0 +1,442 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-13T09:20:31.645046+00:00",
+  "title": "Design System: 血糖时序监测与智能问答系统",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "ink",
+        "canonical": "#172B4D",
+        "tonalRamp": [
+          "oklch(from #172B4D 0.15 c h)",
+          "oklch(from #172B4D 0.26 c h)",
+          "oklch(from #172B4D 0.37 c h)",
+          "oklch(from #172B4D 0.49 c h)",
+          "oklch(from #172B4D 0.60 c h)",
+          "oklch(from #172B4D 0.72 c h)",
+          "oklch(from #172B4D 0.83 c h)",
+          "oklch(from #172B4D 0.95 c h)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "ink-muted",
+        "canonical": "#52637A",
+        "tonalRamp": [
+          "oklch(from #52637A 0.15 c h)",
+          "oklch(from #52637A 0.26 c h)",
+          "oklch(from #52637A 0.37 c h)",
+          "oklch(from #52637A 0.49 c h)",
+          "oklch(from #52637A 0.60 c h)",
+          "oklch(from #52637A 0.72 c h)",
+          "oklch(from #52637A 0.83 c h)",
+          "oklch(from #52637A 0.95 c h)"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "ink-faint",
+        "canonical": "#65758B",
+        "tonalRamp": [
+          "oklch(from #65758B 0.15 c h)",
+          "oklch(from #65758B 0.26 c h)",
+          "oklch(from #65758B 0.37 c h)",
+          "oklch(from #65758B 0.49 c h)",
+          "oklch(from #65758B 0.60 c h)",
+          "oklch(from #65758B 0.72 c h)",
+          "oklch(from #65758B 0.83 c h)",
+          "oklch(from #65758B 0.95 c h)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "surface",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "oklch(from #FFFFFF 0.15 c h)",
+          "oklch(from #FFFFFF 0.26 c h)",
+          "oklch(from #FFFFFF 0.37 c h)",
+          "oklch(from #FFFFFF 0.49 c h)",
+          "oklch(from #FFFFFF 0.60 c h)",
+          "oklch(from #FFFFFF 0.72 c h)",
+          "oklch(from #FFFFFF 0.83 c h)",
+          "oklch(from #FFFFFF 0.95 c h)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "canvas",
+        "canonical": "#F5F7FA",
+        "tonalRamp": [
+          "oklch(from #F5F7FA 0.15 c h)",
+          "oklch(from #F5F7FA 0.26 c h)",
+          "oklch(from #F5F7FA 0.37 c h)",
+          "oklch(from #F5F7FA 0.49 c h)",
+          "oklch(from #F5F7FA 0.60 c h)",
+          "oklch(from #F5F7FA 0.72 c h)",
+          "oklch(from #F5F7FA 0.83 c h)",
+          "oklch(from #F5F7FA 0.95 c h)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "border",
+        "canonical": "#DCE3EC",
+        "tonalRamp": [
+          "oklch(from #DCE3EC 0.15 c h)",
+          "oklch(from #DCE3EC 0.26 c h)",
+          "oklch(from #DCE3EC 0.37 c h)",
+          "oklch(from #DCE3EC 0.49 c h)",
+          "oklch(from #DCE3EC 0.60 c h)",
+          "oklch(from #DCE3EC 0.72 c h)",
+          "oklch(from #DCE3EC 0.83 c h)",
+          "oklch(from #DCE3EC 0.95 c h)"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "border-strong",
+        "canonical": "#B9C3CE",
+        "tonalRamp": [
+          "oklch(from #B9C3CE 0.15 c h)",
+          "oklch(from #B9C3CE 0.26 c h)",
+          "oklch(from #B9C3CE 0.37 c h)",
+          "oklch(from #B9C3CE 0.49 c h)",
+          "oklch(from #B9C3CE 0.60 c h)",
+          "oklch(from #B9C3CE 0.72 c h)",
+          "oklch(from #B9C3CE 0.83 c h)",
+          "oklch(from #B9C3CE 0.95 c h)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "primary",
+        "canonical": "#2463EB",
+        "tonalRamp": [
+          "oklch(from #2463EB 0.15 c h)",
+          "oklch(from #2463EB 0.26 c h)",
+          "oklch(from #2463EB 0.37 c h)",
+          "oklch(from #2463EB 0.49 c h)",
+          "oklch(from #2463EB 0.60 c h)",
+          "oklch(from #2463EB 0.72 c h)",
+          "oklch(from #2463EB 0.83 c h)",
+          "oklch(from #2463EB 0.95 c h)"
+        ]
+      },
+      "primary-strong": {
+        "role": "primary",
+        "displayName": "primary-strong",
+        "canonical": "#194DC4",
+        "tonalRamp": [
+          "oklch(from #194DC4 0.15 c h)",
+          "oklch(from #194DC4 0.26 c h)",
+          "oklch(from #194DC4 0.37 c h)",
+          "oklch(from #194DC4 0.49 c h)",
+          "oklch(from #194DC4 0.60 c h)",
+          "oklch(from #194DC4 0.72 c h)",
+          "oklch(from #194DC4 0.83 c h)",
+          "oklch(from #194DC4 0.95 c h)"
+        ]
+      },
+      "accent": {
+        "role": "secondary",
+        "displayName": "accent",
+        "canonical": "#C2412D",
+        "tonalRamp": [
+          "oklch(from #C2412D 0.15 c h)",
+          "oklch(from #C2412D 0.26 c h)",
+          "oklch(from #C2412D 0.37 c h)",
+          "oklch(from #C2412D 0.49 c h)",
+          "oklch(from #C2412D 0.60 c h)",
+          "oklch(from #C2412D 0.72 c h)",
+          "oklch(from #C2412D 0.83 c h)",
+          "oklch(from #C2412D 0.95 c h)"
+        ]
+      },
+      "info": {
+        "role": "secondary",
+        "displayName": "info",
+        "canonical": "#1B6FAE",
+        "tonalRamp": [
+          "oklch(from #1B6FAE 0.15 c h)",
+          "oklch(from #1B6FAE 0.26 c h)",
+          "oklch(from #1B6FAE 0.37 c h)",
+          "oklch(from #1B6FAE 0.49 c h)",
+          "oklch(from #1B6FAE 0.60 c h)",
+          "oklch(from #1B6FAE 0.72 c h)",
+          "oklch(from #1B6FAE 0.83 c h)",
+          "oklch(from #1B6FAE 0.95 c h)"
+        ]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "success",
+        "canonical": "#147D64",
+        "tonalRamp": [
+          "oklch(from #147D64 0.15 c h)",
+          "oklch(from #147D64 0.26 c h)",
+          "oklch(from #147D64 0.37 c h)",
+          "oklch(from #147D64 0.49 c h)",
+          "oklch(from #147D64 0.60 c h)",
+          "oklch(from #147D64 0.72 c h)",
+          "oklch(from #147D64 0.83 c h)",
+          "oklch(from #147D64 0.95 c h)"
+        ]
+      },
+      "warning": {
+        "role": "secondary",
+        "displayName": "warning",
+        "canonical": "#9A620B",
+        "tonalRamp": [
+          "oklch(from #9A620B 0.15 c h)",
+          "oklch(from #9A620B 0.26 c h)",
+          "oklch(from #9A620B 0.37 c h)",
+          "oklch(from #9A620B 0.49 c h)",
+          "oklch(from #9A620B 0.60 c h)",
+          "oklch(from #9A620B 0.72 c h)",
+          "oklch(from #9A620B 0.83 c h)",
+          "oklch(from #9A620B 0.95 c h)"
+        ]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "danger",
+        "canonical": "#B93838",
+        "tonalRamp": [
+          "oklch(from #B93838 0.15 c h)",
+          "oklch(from #B93838 0.26 c h)",
+          "oklch(from #B93838 0.37 c h)",
+          "oklch(from #B93838 0.49 c h)",
+          "oklch(from #B93838 0.60 c h)",
+          "oklch(from #B93838 0.72 c h)",
+          "oklch(from #B93838 0.83 c h)",
+          "oklch(from #B93838 0.95 c h)"
+        ]
+      },
+      "demo": {
+        "role": "secondary",
+        "displayName": "demo",
+        "canonical": "#6B4C8A",
+        "tonalRamp": [
+          "oklch(from #6B4C8A 0.15 c h)",
+          "oklch(from #6B4C8A 0.26 c h)",
+          "oklch(from #6B4C8A 0.37 c h)",
+          "oklch(from #6B4C8A 0.49 c h)",
+          "oklch(from #6B4C8A 0.60 c h)",
+          "oklch(from #6B4C8A 0.72 c h)",
+          "oklch(from #6B4C8A 0.83 c h)",
+          "oklch(from #6B4C8A 0.95 c h)"
+        ]
+      },
+      "surface-subtle": {
+        "role": "neutral",
+        "displayName": "surface-subtle",
+        "canonical": "#EEF3F7",
+        "tonalRamp": [
+          "oklch(from #EEF3F7 0.15 c h)",
+          "oklch(from #EEF3F7 0.26 c h)",
+          "oklch(from #EEF3F7 0.37 c h)",
+          "oklch(from #EEF3F7 0.49 c h)",
+          "oklch(from #EEF3F7 0.60 c h)",
+          "oklch(from #EEF3F7 0.72 c h)",
+          "oklch(from #EEF3F7 0.83 c h)",
+          "oklch(from #EEF3F7 0.95 c h)"
+        ]
+      },
+      "danger-subtle": {
+        "role": "secondary",
+        "displayName": "danger-subtle",
+        "canonical": "#FBEAE7",
+        "tonalRamp": [
+          "oklch(from #FBEAE7 0.15 c h)",
+          "oklch(from #FBEAE7 0.26 c h)",
+          "oklch(from #FBEAE7 0.37 c h)",
+          "oklch(from #FBEAE7 0.49 c h)",
+          "oklch(from #FBEAE7 0.60 c h)",
+          "oklch(from #FBEAE7 0.72 c h)",
+          "oklch(from #FBEAE7 0.83 c h)",
+          "oklch(from #FBEAE7 0.95 c h)"
+        ]
+      },
+      "warning-subtle": {
+        "role": "secondary",
+        "displayName": "warning-subtle",
+        "canonical": "#FFF4E0",
+        "tonalRamp": [
+          "oklch(from #FFF4E0 0.15 c h)",
+          "oklch(from #FFF4E0 0.26 c h)",
+          "oklch(from #FFF4E0 0.37 c h)",
+          "oklch(from #FFF4E0 0.49 c h)",
+          "oklch(from #FFF4E0 0.60 c h)",
+          "oklch(from #FFF4E0 0.72 c h)",
+          "oklch(from #FFF4E0 0.83 c h)",
+          "oklch(from #FFF4E0 0.95 c h)"
+        ]
+      },
+      "success-subtle": {
+        "role": "secondary",
+        "displayName": "success-subtle",
+        "canonical": "#E7F4EC",
+        "tonalRamp": [
+          "oklch(from #E7F4EC 0.15 c h)",
+          "oklch(from #E7F4EC 0.26 c h)",
+          "oklch(from #E7F4EC 0.37 c h)",
+          "oklch(from #E7F4EC 0.49 c h)",
+          "oklch(from #E7F4EC 0.60 c h)",
+          "oklch(from #E7F4EC 0.72 c h)",
+          "oklch(from #E7F4EC 0.83 c h)",
+          "oklch(from #E7F4EC 0.95 c h)"
+        ]
+      },
+      "info-subtle": {
+        "role": "secondary",
+        "displayName": "info-subtle",
+        "canonical": "#EDF3FF",
+        "tonalRamp": [
+          "oklch(from #EDF3FF 0.15 c h)",
+          "oklch(from #EDF3FF 0.26 c h)",
+          "oklch(from #EDF3FF 0.37 c h)",
+          "oklch(from #EDF3FF 0.49 c h)",
+          "oklch(from #EDF3FF 0.60 c h)",
+          "oklch(from #EDF3FF 0.72 c h)",
+          "oklch(from #EDF3FF 0.83 c h)",
+          "oklch(from #EDF3FF 0.95 c h)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "headline",
+        "purpose": "Web页面标题"
+      },
+      "title": {
+        "displayName": "title",
+        "purpose": "Web分节标题"
+      },
+      "body": {
+        "displayName": "body",
+        "purpose": "Web正文"
+      },
+      "label": {
+        "displayName": "label",
+        "purpose": "Web辅助说明"
+      },
+      "web-data": {
+        "displayName": "web-data",
+        "purpose": "工作台概览数值"
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-1",
+        "value": "0 1px 2px rgba(16, 24, 40, .05)",
+        "purpose": "已声明低层阴影令牌；普通panel实际禁用阴影。"
+      },
+      {
+        "name": "shadow-2",
+        "value": "0 12px 32px rgba(16, 24, 40, .14)",
+        "purpose": "已声明浮层阴影令牌，不推断为每个容器启用。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "dashboard-shimmer",
+        "value": "shimmer 1.5s ease infinite",
+        "purpose": "工作台加载骨架；该组件局部支持prefers-reduced-motion。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "shell-compact-analysis-stack",
+        "value": "1100px"
+      },
+      {
+        "name": "dashboard-stack",
+        "value": "1000px"
+      },
+      {
+        "name": "shell-mobile",
+        "value": "767px"
+      },
+      {
+        "name": "dashboard-single-column",
+        "value": "620px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Web主按钮",
+      "kind": "button",
+      "description": "Element Plus主操作样式。",
+      "html": "<button class=\"ds-primary\">保存</button>",
+      "css": ".ds-primary{background:var(--color-primary,#2463EB);color:var(--color-surface,#FFFFFF);border:1px solid var(--color-primary,#2463EB);border-radius:var(--radius-sm,8px);min-height:34px;padding:0 14px;font:500 14px \"Noto Sans SC\",\"Microsoft YaHei\",sans-serif}.ds-primary:hover,.ds-primary:focus{background:var(--color-primary-strong,#194DC4);border-color:var(--color-primary-strong,#194DC4)}.ds-primary:focus-visible{outline:2px solid var(--color-primary,#2463EB);outline-offset:2px}",
+      "refersTo": "button-primary"
+    },
+    {
+      "name": "Web输入框",
+      "kind": "input",
+      "description": "从Element Plus包装层展开的独立输入示例。",
+      "html": "<input class=\"ds-input\" aria-label=\"患者\" placeholder=\"选择患者\" />",
+      "css": ".ds-input{font:14px \"Noto Sans SC\",\"Microsoft YaHei\",sans-serif;color:var(--color-ink,#172B4D);background:var(--color-surface,#FFFFFF);border:0;border-radius:var(--radius-sm,8px);min-height:36px;padding:0 11px;box-shadow:0 0 0 1px var(--color-border,#DCE3EC) inset}.ds-input:hover{box-shadow:0 0 0 1px var(--color-border-strong,#B9C3CE) inset}.ds-input:focus{box-shadow:0 0 0 1px var(--color-primary,#2463EB) inset}.ds-input:focus-visible{outline:2px solid var(--color-primary,#2463EB);outline-offset:2px}"
+    },
+    {
+      "name": "侧栏选中导航",
+      "kind": "nav",
+      "description": "选中侧栏条目的文字版，无外部图标依赖。",
+      "html": "<nav><a class=\"ds-nav\" href=\"#dashboard\" aria-current=\"page\">工作台</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:8px;background:var(--color-info-subtle,#EDF3FF);color:var(--color-primary,#2463EB);font:600 14px \"Noto Sans SC\",\"Microsoft YaHei\",sans-serif;text-decoration:none}.ds-nav:hover{background:#F7FAFC}.ds-nav:focus-visible{outline:2px solid var(--color-primary,#2463EB);outline-offset:2px}"
+    },
+    {
+      "name": "预警状态标签",
+      "kind": "chip",
+      "description": "非交互状态；圆点与文字共同说明。",
+      "html": "<span class=\"ds-status\">待处理</span>",
+      "css": ".ds-status{display:inline-flex;align-items:center;gap:5px;padding:1px 8px;border-radius:4px;font:12px/20px \"Noto Sans SC\",\"Microsoft YaHei\",sans-serif;color:var(--color-danger,#B93838);background:var(--color-danger-subtle,#FBEAE7);border:1px solid #EBCBC5;white-space:nowrap}.ds-status:before{content:\"\";width:5px;height:5px;border-radius:50%;background:currentColor}"
+    },
+    {
+      "name": "Web内容面板",
+      "kind": "card",
+      "description": "普通静态面板不使用阴影。",
+      "html": "<section class=\"ds-panel\"><h2>近期趋势</h2><p>按来源和日期查看记录</p></section>",
+      "css": ".ds-panel{background:var(--color-surface,#FFFFFF);color:var(--color-ink,#172B4D);border:1px solid var(--color-border,#DCE3EC);border-radius:var(--radius-md,12px);padding:20px 22px;box-shadow:none;font:14px/1.57 \"Noto Sans SC\",\"Microsoft YaHei\",sans-serif}.ds-panel h2{margin:0 0 12px;font-size:16px;line-height:1.4;font-weight:600}.ds-panel p{margin:0;color:var(--color-ink-muted,#52637A)}",
+      "refersTo": "panel"
+    },
+    {
+      "name": "小程序卡片比例预览",
+      "kind": "card",
+      "description": "仅面板演示按375px视口的rpx/2映射；原生值以frontmatter及WXSS为准，不是原生验收。",
+      "html": "<section class=\"ds-mini-card\"><h2>今日用药</h2><p>查看用药计划</p></section>",
+      "css": ".ds-mini-card{background:var(--color-surface,#FFFFFF);color:var(--color-ink,#172B4D);border:0.5px solid var(--color-border,#DCE3EC);border-radius:12px;padding:14px;margin-bottom:10px;font:14px/1.55 \"Noto Sans SC\",\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-mini-card h2{margin:0 0 7px;font-size:15px;line-height:1.4;font-weight:600}.ds-mini-card p{margin:0}",
+      "refersTo": "mini-card"
+    }
+  ],
+  "narrative": {
+    "northStar": "临床工作台与日常记录",
+    "overview": "临床管理工作台与患者日常记录共用蓝白视觉语言：浅灰画布、白色面板、清晰细边框、蓝色操作与克制的状态色。页面依靠真实内容、筛选和状态建立层级，产品事实与指标语义以 PRODUCT.md 为准。\n\n本记录依据实际 Vue/CSS 与 WXML/WXSS 提取，刷新已获授权的新原型实现；来源见 `docs/ui-implementation-2026-11-13/实现方向.md`。Figma 原始参考在 `docs/ui-prototypes/全套页面-2026-11-13/页面图片/`，代码是本文件记录值的依据。",
+    "keyCharacteristics": [
+      "蓝色主操作，白色内容层，浅灰画布。",
+      "桌面紧凑表格，患者端触控与读数优先。",
+      "来源、真实/演示和处理状态持续可辨。"
+    ],
+    "rules": [
+      {
+        "name": "Explicit Status",
+        "body": "颜色辅助状态，文字明确来源、真实性和处理结果。",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do 使用现有颜色令牌，状态同时给出文字与颜色。",
+      "Do 保留 SMBG/CGM、真实/演示、未配置目标与数据不足的明确区别。",
+      "Do 在表格和读数中使用等宽数字，保留单位、时间与来源。",
+      "Do 为加载、空、失败和部分数据保留说明；错误靠近操作并保留输入。"
+    ],
+    "donts": [
+      "Don't 将本次 HTML 转译预览称为小程序原生验收。",
+      "Don't 用颜色或正常色替代数据充分性和目标配置判断。",
+      "Don't 把旧顶部桌面导航、旧蓝色或首页蓝色双读数头重新作为本轮主界面规范。"
+    ]
+  }
+}

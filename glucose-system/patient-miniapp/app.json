@@ -1,0 +1,96 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/home/index",
+    "pages/glucose/record",
+    "pages/glucose/list",
+    "pages/my/index",
+    "pages/my/profile",
+    "pages/my/targets",
+    "pages/analysis/index",
+    "pages/qa/index",
+    "pages/privacy/index"
+  ],
+  "subpackages": [
+    {
+      "root": "subpackages/medication",
+      "pages": [
+        "pages/index",
+        "pages/form"
+      ]
+    },
+    {
+      "root": "subpackages/analysis",
+      "pages": [
+        "pages/trend"
+      ]
+    },
+    {
+      "root": "subpackages/import",
+      "pages": [
+        "pages/preview"
+      ]
+    },
+    {
+      "root": "subpackages/qa",
+      "pages": [
+        "pages/sessions",
+        "pages/chat"
+      ]
+    },
+    {
+      "root": "subpackages/alert",
+      "pages": [
+        "pages/list"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "血糖记录",
+    "backgroundColor": "#F5F7FA",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#65758B",
+    "selectedColor": "#2463EB",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/glucose/list",
+        "text": "记录",
+        "iconPath": "assets/tabbar/records.png",
+        "selectedIconPath": "assets/tabbar/records-active.png"
+      },
+      {
+        "pagePath": "pages/analysis/index",
+        "text": "分析",
+        "iconPath": "assets/tabbar/analysis.png",
+        "selectedIconPath": "assets/tabbar/analysis-active.png"
+      },
+      {
+        "pagePath": "pages/qa/index",
+        "text": "问答",
+        "iconPath": "assets/tabbar/chat.png",
+        "selectedIconPath": "assets/tabbar/chat-active.png"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/profile.png",
+        "selectedIconPath": "assets/tabbar/profile-active.png"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

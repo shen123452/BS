@@ -1,0 +1,55 @@
+<view class="page record-page">
+  <view wx:if="{{!successInfo}}" class="page-heading"><view><view class="page-title">记录一次测量</view><view class="page-subtitle">按实际测量填写，保存后仍可修改。</view></view></view>
+
+  <view wx:if="{{!successInfo}}" class="card">
+    <view class="form-item">
+      <text class="form-label">血糖值</text>
+      <view class="glucose-value-field"><input class="form-input glucose-input" type="digit" value="{{glucose}}" bindinput="onInputGlucose" placeholder="0.0" maxlength="5" /><text class="unit">mmol/L</text></view>
+      <view class="form-help">允许一位小数，范围 0.5 – 40.0</view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">测量类型</text>
+      <view class="chip-row">
+        <view wx:for="{{types}}" wx:key="value" class="chip {{measureType === item.value ? 'chip-active' : ''}}" data-value="{{item.value}}" bindtap="pickType">{{item.label}}</view>
+      </view>
+      <view class="form-help">请按实际情况选择；没有确认背景时选择「随机」</view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">测量时间</text>
+      <view class="chip-row">
+        <view class="chip {{!useCustomTime ? 'chip-active' : ''}}" bindtap="pickNow">当前时间</view>
+        <view class="chip {{useCustomTime ? 'chip-active' : ''}}" bindtap="pickCustom">自定义时间</view>
+      </view>
+      <view wx:if="{{useCustomTime}}" class="row gap custom-time">
+        <picker mode="date" value="{{customDate}}" bindchange="onDateChange"><view class="form-input picker-input">{{customDate}}</view></picker>
+        <picker mode="time" value="{{customTime}}" bindchange="onTimeChange"><view class="form-input picker-input">{{customTime}}</view></picker>
+      </view>
+      <view wx:if="{{useCustomTime}}" class="form-help">补录超过 15 分钟的记录会标为历史</view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">备注（可选）</text>
+      <input class="form-input" value="{{note}}" bindinput="onInputNote" placeholder="如：晨起测量" maxlength="50" />
+    </view>
+
+    <view wx:if="{{fieldError}}" class="form-error">{{fieldError}}</view>
+
+    <button class="btn-primary submit-button" disabled="{{submitting}}" bindtap="handleSubmit">{{submitting ? '保存中…' : '保存记录'}}</button>
+  </view>
+
+  <view wx:else class="success-sheet">
+    <view class="success-line">记录已保存</view>
+    <view class="success-reading"><text class="number">{{successInfo.glucoseMmol}}</text><text class="unit">mmol/L</text></view>
+    <view class="muted">{{successInfo.measureTypeLabel}} · {{successInfo.measuredAt}}</view>
+    <view class="muted success-note">你可以在血糖记录中查看或修改本次测量。</view>
+    <view wx:if="{{successInfo.riskFlag !== 'NONE'}}" class="tag tag-warn success-alert">该读数触发了异常提醒，可在预警页查看</view>
+    <view class="muted success-note">提醒规则为本系统演示默认配置，不代表诊断标准。</view>
+    <view class="success-actions">
+      <button class="btn-primary" bindtap="goHome">返回首页</button>
+      <button class="btn-plain" bindtap="continueRecord">继续记录</button>
+      <button class="text-button" bindtap="viewToday">查看今日记录</button>
+    </view>
+  </view>
+</view>
